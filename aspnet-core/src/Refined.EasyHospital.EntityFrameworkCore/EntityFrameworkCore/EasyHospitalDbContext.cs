@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Refined.EasyHospital.Provinces;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -53,6 +55,12 @@ public class EasyHospitalDbContext :
 
     #endregion
 
+    #region Development Entities
+
+    public DbSet<Province> Provinces { get; set; }
+
+    #endregion
+
     public EasyHospitalDbContext(DbContextOptions<EasyHospitalDbContext> options)
         : base(options)
     {
@@ -76,11 +84,23 @@ public class EasyHospitalDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(EasyHospitalConsts.DbTablePrefix + "YourEntities", EasyHospitalConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        // Province
+        builder.Entity<Province>(b =>
+        {
+            b.ToTable(EasyHospitalConsts.DbTablePrefix + "Provinces", EasyHospitalConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            //Property constraints
+            b.Property(p => p.Code).IsRequired().HasMaxLength(2);
+            b.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            b.Property(p => p.DecisionDate);
+            b.Property(p => p.EffectiveDate);
+            b.Property(p => p.Population);
+            b.Property(p => p.Area);
+            b.Property(p => p.Description).HasMaxLength(512);
+
+            b.HasIndex(p => p.Code).IsUnique();
+            b.HasIndex(p => p.Name).IsUnique();
+        });
     }
 }
