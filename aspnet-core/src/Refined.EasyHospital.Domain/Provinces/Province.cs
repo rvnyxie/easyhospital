@@ -1,29 +1,12 @@
-﻿using System;
-using Volo.Abp.Domain.Entities.Auditing;
+﻿using Refined.EasyHospital.Base;
 
 namespace Refined.EasyHospital.Provinces
 {
     /// <summary>
     /// Province Entity
     /// </summary>
-    public class Province : AuditedAggregateRoot<Guid>
+    public class Province : BaseLocality
     {
-        public string Code { get; set; }
-
-        public string Name { get; set; }
-
-        public string? EnglishName { get; set; }
-
-        public DateTime? DecisionDate { get; set; }
-
-        public DateTime? EffectiveDate { get; set; }
-
-        public int Population { get; set; }
-
-        public float Area { get; set; }
-
-        public string? Description { get; set; }
-
         public ProvinceLevel Level { get; set; }
     }
 }
