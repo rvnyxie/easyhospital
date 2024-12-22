@@ -8,7 +8,7 @@ namespace Refined.EasyHospital.Provinces
     /// <summary>
     /// Service interface for Province
     /// </summary>
-    public interface IProvinceService : ICrudAppService<ProvinceDto, Guid, PagedAndSortedResultRequestDto, ProvinceCreateDto, ProvinceUpdateDto>
+    public interface IProvinceAppService : ICrudAppService<ProvinceDto, Guid, PagedAndSortedResultRequestDto, ProvinceCreateDto, ProvinceUpdateDto>
     {
         /// <summary>
         /// Override asynchronous get by ID
