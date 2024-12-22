@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Refined.EasyHospital.Districts;
 using Refined.EasyHospital.Provinces;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -58,6 +59,7 @@ public class EasyHospitalDbContext :
     #region Development Entities
 
     public DbSet<Province> Provinces { get; set; }
+    public DbSet<District> Districts { get; set; }
 
     #endregion
 
@@ -92,6 +94,25 @@ public class EasyHospitalDbContext :
 
             //Property constraints
             b.Property(p => p.Code).IsRequired().HasMaxLength(2);
+            b.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            b.Property(p => p.DecisionDate);
+            b.Property(p => p.EffectiveDate);
+            b.Property(p => p.Population);
+            b.Property(p => p.Area);
+            b.Property(p => p.Description).HasMaxLength(512);
+
+            b.HasIndex(p => p.Code).IsUnique();
+            b.HasIndex(p => p.Name).IsUnique();
+        });
+
+        // District
+        builder.Entity<District>(b =>
+        {
+            b.ToTable(EasyHospitalConsts.DbTablePrefix + "Districts", EasyHospitalConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Property constraints
+            b.Property(p => p.Code).IsRequired().HasMaxLength(3);
             b.Property(p => p.Name).IsRequired().HasMaxLength(100);
             b.Property(p => p.DecisionDate);
             b.Property(p => p.EffectiveDate);

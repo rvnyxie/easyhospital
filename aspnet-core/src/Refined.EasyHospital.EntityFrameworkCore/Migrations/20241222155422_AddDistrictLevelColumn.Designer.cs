@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Refined.EasyHospital.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Refined.EasyHospital.Migrations
 {
     [DbContext(typeof(EasyHospitalDbContext))]
-    partial class EasyHospitalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241222155422_AddDistrictLevelColumn")]
+    partial class AddDistrictLevelColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,8 +37,8 @@ namespace Refined.EasyHospital.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("varchar(3)");
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -88,9 +91,6 @@ namespace Refined.EasyHospital.Migrations
 
                     b.Property<int>("Population")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("ProvinceId")
-                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
