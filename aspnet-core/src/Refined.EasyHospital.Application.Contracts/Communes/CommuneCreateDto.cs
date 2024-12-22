@@ -1,18 +1,15 @@
-﻿using Refined.EasyHospital.Provinces;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Refined.EasyHospital.Districts
+namespace Refined.EasyHospital.Communes
 {
     /// <summary>
-    /// Update DTO for District
+    /// Creation DTO for Commune
     /// </summary>
-    public class DistrictUpdateDto
+    public class CommuneCreateDto
     {
-        public Guid Id { get; set; }
-
         [Required]
-        [MaxLength(3)]
+        [MaxLength(5)]
         public string Code { get; set; }
 
         [Required]
@@ -32,8 +29,8 @@ namespace Refined.EasyHospital.Districts
         [MaxLength(512)]
         public string? Description { get; set; }
 
-        public ProvinceLevel Level { get; set; }
+        public CommuneLevel Level { get; set; }
 
-        public Guid ProvinceId { get; set; }
+        public Guid DistrictId { get; set; }
     }
 }

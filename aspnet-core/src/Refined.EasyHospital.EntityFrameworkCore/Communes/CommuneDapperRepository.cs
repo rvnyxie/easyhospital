@@ -8,19 +8,20 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories.Dapper;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace Refined.EasyHospital.Districts
+namespace Refined.EasyHospital.Communes
 {
     /// <summary>
-    /// Dapper repository implementation for District
+    /// Dapper repository implementation for Commune
     /// </summary>
-    public class DistrictDapperRepository(
+    /// <param name="dbContextProvider">App DB Context</param>
+    public class CommuneDapperRepository(
         IDbContextProvider<EasyHospitalDbContext> dbContextProvider)
         :
         DapperRepository<EasyHospitalDbContext>(dbContextProvider),
         ITransientDependency,
-        IDistrictDapperRepository
+        ICommuneDapperRepository
     {
-        public async Task<List<District>> GetManyAsync()
+        public async Task<List<Commune>> GetManyAsync()
         {
             // Get connection
             using (var dbConnection = await GetDbConnectionAsync())
@@ -28,19 +29,18 @@ namespace Refined.EasyHospital.Districts
                 // Validate sql parameters
 
                 // Compose sql command
-                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts";
+                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, DistrictId FROM AppCommunes";
 
                 // Get data
-                var districts = await dbConnection.QueryAsync<District>(sqlCommand, transaction: await GetDbTransactionAsync());
+                var communes = await dbConnection.QueryAsync<Commune>(sqlCommand, transaction: await GetDbTransactionAsync());
 
                 // Return result
-                return districts.ToList();
+                return communes.ToList();
             }
         }
 
-        public async Task<District> GetAsync(Guid id)
+        public async Task<Commune> GetAsync(Guid id)
         {
-            // Get connection
             using (var dbConnection = await GetDbConnectionAsync())
             {
                 // Validate sql parameters
@@ -48,13 +48,13 @@ namespace Refined.EasyHospital.Districts
                 parameters.Add("id", id, System.Data.DbType.Guid);
 
                 // Compose sql command
-                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts WHERE id = @id";
+                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, DistrictId FROM AppCommunes WHERE id = @id";
 
                 // Get data
-                var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+                var commune = await dbConnection.QueryFirstOrDefaultAsync<Commune>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
                 // Return result
-                return district;
+                return commune;
             }
         }
     }

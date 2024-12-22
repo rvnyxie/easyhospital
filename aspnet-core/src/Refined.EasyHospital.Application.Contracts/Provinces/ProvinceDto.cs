@@ -8,6 +8,8 @@ namespace Refined.EasyHospital.Provinces
     /// </summary>
     public class ProvinceDto : AuditedEntityDto<Guid>
     {
+        public Guid Id { get; set; }
+
         public string Code { get; set; }
 
         public string Name { get; set; }
