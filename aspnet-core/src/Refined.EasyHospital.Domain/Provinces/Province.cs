@@ -14,9 +14,9 @@ namespace Refined.EasyHospital.Provinces
 
         public string? EnglishName { get; set; }
 
-        public DateOnly? DecisionDate { get; set; }
+        public DateTime? DecisionDate { get; set; }
 
-        public DateOnly? EffectiveDate { get; set; }
+        public DateTime? EffectiveDate { get; set; }
 
         public int Population { get; set; }
 

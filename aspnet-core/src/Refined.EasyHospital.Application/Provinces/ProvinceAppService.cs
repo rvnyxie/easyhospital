@@ -36,9 +36,9 @@ namespace Refined.EasyHospital.Provinces
         {
             var province = await provinceDapperRepository.GetAsync(id);
 
-            Console.WriteLine(province.ToString());
+            var provinceDto = await MapToGetOutputDtoAsync(province);
 
-            return new ProvinceDto();
+            return provinceDto;
         }
     }
 }

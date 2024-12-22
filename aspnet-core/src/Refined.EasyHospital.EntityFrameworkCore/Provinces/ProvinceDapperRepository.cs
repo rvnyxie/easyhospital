@@ -1,6 +1,8 @@
-﻿using Refined.EasyHospital.EntityFrameworkCore;
+﻿using Dapper;
+using Refined.EasyHospital.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories.Dapper;
@@ -19,20 +21,40 @@ namespace Refined.EasyHospital.Provinces
     {
         public async Task<List<Province>> GetManyAsync()
         {
-            await Task.Delay(100);
+            // Get connection
+            using (var dbConnection = await GetDbConnectionAsync())
+            {
+                // Validate sql parameters
 
-            var provinces = new List<Province> { new Province(), new Province() };
+                // Compose sql command
+                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppProvinces";
 
-            return provinces;
+                // Get data
+                var provinces = await dbConnection.QueryAsync<Province>(sqlCommand, transaction: await GetDbTransactionAsync());
+
+                // Return result
+                return provinces.ToList();
+            }
         }
 
         public async Task<Province> GetAsync(Guid id)
         {
-            await Task.Delay(100);
+            // Get connection
+            using (var dbConnection = await GetDbConnectionAsync())
+            {
+                // Validate sql parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("id", id);
 
-            var province = new Province();
+                // Compose sql command
+                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppProvinces WHERE id = @id";
 
-            return province;
+                // Get data
+                var province = await dbConnection.QueryFirstOrDefaultAsync<Province>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+                // Return result
+                return province;
+            }
         }
     }
 }
