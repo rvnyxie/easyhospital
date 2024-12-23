@@ -8,7 +8,8 @@ namespace Refined.EasyHospital.Communes
     /// App service interface for Commune
     /// </summary>
     public interface ICommuneAppService :
-        ICrudAppService<CommuneDto, Guid, LocalityPagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>
+        ICrudAppService<CommuneDto, Guid, LocalityPagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>,
+        IBaseLocalityAppService
     {
     }
 }

@@ -1,4 +1,5 @@
-﻿using Refined.EasyHospital.Districts;
+﻿using Refined.EasyHospital.Communes;
+using Refined.EasyHospital.Districts;
 using Refined.EasyHospital.Provinces;
 
 namespace Refined.EasyHospital.Helpers
@@ -54,6 +55,32 @@ namespace Refined.EasyHospital.Helpers
                     return true;
                 case "Thị xã":
                     level = DistrictLevel.Town;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Try to map from commune level text to commune level enum
+        /// </summary>
+        /// <param name="levelText">Commune level text</param>
+        /// <param name="level">Commune level enum</param>
+        /// <returns>True if successful to map concrete value, false if not</returns>
+        public bool TryMapCommuneLevel(string levelText, out CommuneLevel level)
+        {
+            level = default;
+
+            switch (levelText.Trim())
+            {
+                case "Xã":
+                    level = CommuneLevel.Commune;
+                    return true;
+                case "Phường":
+                    level = CommuneLevel.Ward;
+                    return true;
+                case "Thị trấn":
+                    level = CommuneLevel.Town;
                     return true;
                 default:
                     return false;

@@ -5,6 +5,8 @@
     /// </summary>
     public enum CommuneLevel
     {
-        Commune
+        Commune, // Xã
+        Ward, // Phường
+        Town // Thị trấn
     }
 }

@@ -68,5 +68,68 @@ namespace Refined.EasyHospital.Communes
                 return commune;
             }
         }
+
+        public async Task<Commune> GetByCodeAsync(string code)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("code", code);
+
+            // Compose sql command
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppCommunes WHERE code = @code";
+
+            // Get data
+            var commune = await dbConnection.QueryFirstOrDefaultAsync<Commune>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return commune;
+        }
+
+        public async Task<Commune> GetByNameAsync(string name)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("name", name);
+
+            // Compose sql command
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppCommunes WHERE name = @name";
+
+            // Get data
+            var commune = await dbConnection.QueryFirstOrDefaultAsync<Commune>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return commune;
+        }
+
+        public async Task<List<Commune>> GetByCodesOrNamesAsync(IEnumerable<string> codes, IEnumerable<string> names)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("codes", codes);
+            parameters.Add("names", names);
+
+            // Compose sql command
+            var sqlCommand = @"
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                FROM AppCommunes
+                WHERE (Code in @codes OR Name in @names)
+                ORDER BY Code ASC
+                ";
+
+            // Get data
+            var communes = await dbConnection.QueryAsync<Commune>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return communes.ToList();
+        }
     }
 }

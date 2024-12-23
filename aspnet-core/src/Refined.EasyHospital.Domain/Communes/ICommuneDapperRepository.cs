@@ -6,7 +6,7 @@ namespace Refined.EasyHospital.Communes
     /// <summary>
     /// Dapper repository interface for Commune
     /// </summary>
-    public interface ICommuneDapperRepository : IBaseDapperRepository<Commune, Guid>
+    public interface ICommuneDapperRepository : IBaseLocalityDapperRepository<Commune, Guid>
     {
     }
 }

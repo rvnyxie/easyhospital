@@ -153,11 +153,11 @@ namespace Refined.EasyHospital.Districts
                         }
 
                         // Batch-check existing codes and names
-                        var existingProvinces = await districtDapperRepository.GetByCodesOrNamesAsync(codes, names);
+                        var existingDistricts = await districtDapperRepository.GetByCodesOrNamesAsync(codes, names);
 
                         // Filter out existing records
                         districts = districts.Where(p =>
-                            !existingProvinces.Any(ep => ep.Code == p.Code || ep.Name == p.Name)).ToList();
+                            !existingDistricts.Any(ep => ep.Code == p.Code || ep.Name == p.Name)).ToList();
 
                         if (!districts.Any())
                         {
