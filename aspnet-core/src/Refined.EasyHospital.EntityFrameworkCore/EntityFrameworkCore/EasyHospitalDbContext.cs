@@ -123,7 +123,6 @@ public class EasyHospitalDbContext :
             b.Property(p => p.Description).HasMaxLength(512);
 
             b.HasIndex(p => p.Code).IsUnique();
-            b.HasIndex(p => p.Name).IsUnique();
         });
 
         // Commune
@@ -142,7 +141,6 @@ public class EasyHospitalDbContext :
             b.Property(p => p.Description).HasMaxLength(512);
 
             b.HasIndex(p => p.Code).IsUnique();
-            b.HasIndex(p => p.Name).IsUnique();
         });
     }
 }

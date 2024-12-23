@@ -92,7 +92,7 @@ namespace Refined.EasyHospital.Migrations
                     b.Property<int>("Population")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProvinceId")
+                    b.Property<Guid>("ProvinceCode")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");

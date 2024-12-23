@@ -12,7 +12,7 @@ namespace Refined.EasyHospital.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "ProvinceId",
+                name: "ProvinceCode",
                 table: "AppDistricts",
                 type: "char(36)",
                 nullable: false,
@@ -24,7 +24,7 @@ namespace Refined.EasyHospital.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ProvinceId",
+                name: "ProvinceCode",
                 table: "AppDistricts");
         }
     }

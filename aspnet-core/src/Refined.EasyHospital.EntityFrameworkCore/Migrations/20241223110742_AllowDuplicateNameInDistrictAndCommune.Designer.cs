@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Refined.EasyHospital.Migrations
 {
     [DbContext(typeof(EasyHospitalDbContext))]
-    [Migration("20241222171150_AddCommune")]
-    partial class AddCommune
+    [Migration("20241223110742_AllowDuplicateNameInDistrictAndCommune")]
+    partial class AllowDuplicateNameInDistrictAndCommune
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,8 +62,9 @@ namespace Refined.EasyHospital.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)");
 
-                    b.Property<Guid>("DistrictId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("DistrictCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("EffectiveDate")
                         .HasColumnType("datetime(6)");
@@ -98,9 +99,6 @@ namespace Refined.EasyHospital.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("AppCommunes", (string)null);
@@ -171,15 +169,13 @@ namespace Refined.EasyHospital.Migrations
                     b.Property<int>("Population")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProvinceCode")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("ProvinceCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("AppDistricts", (string)null);

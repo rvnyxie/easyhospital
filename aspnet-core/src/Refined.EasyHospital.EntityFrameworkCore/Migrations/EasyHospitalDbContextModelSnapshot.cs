@@ -59,8 +59,9 @@ namespace Refined.EasyHospital.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)");
 
-                    b.Property<Guid>("DistrictId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("DistrictCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("EffectiveDate")
                         .HasColumnType("datetime(6)");
@@ -95,9 +96,6 @@ namespace Refined.EasyHospital.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("AppCommunes", (string)null);
@@ -168,15 +166,13 @@ namespace Refined.EasyHospital.Migrations
                     b.Property<int>("Population")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProvinceId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("ProvinceCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("AppDistricts", (string)null);

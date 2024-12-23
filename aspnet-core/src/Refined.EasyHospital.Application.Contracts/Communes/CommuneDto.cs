@@ -27,6 +27,6 @@ namespace Refined.EasyHospital.Communes
 
         public CommuneLevel Level { get; set; }
 
-        public Guid DistrictId { get; set; }
+        public string DistrictCode { get; set; } = string.Empty;
     }
 }

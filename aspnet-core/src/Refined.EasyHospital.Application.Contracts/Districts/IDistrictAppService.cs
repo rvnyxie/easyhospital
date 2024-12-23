@@ -7,7 +7,9 @@ namespace Refined.EasyHospital.Districts
     /// <summary>
     /// App service inteface for District
     /// </summary>
-    public interface IDistrictAppService : ICrudAppService<DistrictDto, Guid, LocalityPagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>
+    public interface IDistrictAppService :
+        ICrudAppService<DistrictDto, Guid, LocalityPagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>,
+        IBaseLocalityAppService
     {
     }
 }

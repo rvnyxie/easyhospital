@@ -6,7 +6,7 @@ namespace Refined.EasyHospital.Districts
     /// <summary>
     /// Dapper repository interface for District
     /// </summary>
-    public interface IDistrictDapperRepository : IBaseDapperRepository<District, Guid>
+    public interface IDistrictDapperRepository : IBaseLocalityDapperRepository<District, Guid>
     {
     }
 }

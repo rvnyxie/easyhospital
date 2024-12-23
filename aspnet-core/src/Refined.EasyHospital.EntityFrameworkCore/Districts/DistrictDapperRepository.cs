@@ -23,50 +23,113 @@ namespace Refined.EasyHospital.Districts
         public async Task<List<District>> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
-            using (var dbConnection = await GetDbConnectionAsync())
-            {
-                // Validate sql parameters
-                var parameters = new DynamicParameters();
-                parameters.Add("search", $"%{search}%");
-                parameters.Add("pageSize", pageSize);
-                parameters.Add("offset", (currentPage - 1) * pageSize);
+            var dbConnection = await GetDbConnectionAsync();
 
-                // Compose sql command
-                //var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts";
-                var sqlCommand = @"
-                    SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
-                    FROM AppDistricts
-                    WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
-                    ORDER BY Code ASC
-                    LIMIT @pageSize OFFSET @offset
-                    ";
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("search", $"%{search}%");
+            parameters.Add("pageSize", pageSize);
+            parameters.Add("offset", (currentPage - 1) * pageSize);
 
-                // Get data
-                var districts = await dbConnection.QueryAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            // Compose sql command
+            //var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode FROM AppDistricts";
+            var sqlCommand = @"
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                FROM AppDistricts
+                WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                ORDER BY Code ASC
+                LIMIT @pageSize OFFSET @offset
+                ";
 
-                // Return result
-                return districts.ToList();
-            }
+            // Get data
+            var districts = await dbConnection.QueryAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return districts.ToList();
+
         }
 
         public async Task<District> GetAsync(Guid id)
         {
             // Get connection
-            using (var dbConnection = await GetDbConnectionAsync())
-            {
-                // Validate sql parameters
-                var parameters = new DynamicParameters();
-                parameters.Add("id", id, System.Data.DbType.Guid);
+            var dbConnection = await GetDbConnectionAsync();
 
-                // Compose sql command
-                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts WHERE id = @id";
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, System.Data.DbType.Guid);
 
-                // Get data
-                var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            // Compose sql command
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode FROM AppDistricts WHERE id = @id";
 
-                // Return result
-                return district;
-            }
+            // Get data
+            var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return district;
+
+        }
+
+        public async Task<District> GetByCodeAsync(string code)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("code", code);
+
+            // Compose sql command
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppDistricts WHERE code = @code";
+
+            // Get data
+            var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return district;
+        }
+
+        public async Task<District> GetByNameAsync(string name)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("name", name);
+
+            // Compose sql command
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppDistricts WHERE name = @name";
+
+            // Get data
+            var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return district;
+        }
+
+        public async Task<List<District>> GetByCodesOrNamesAsync(IEnumerable<string> codes, IEnumerable<string> names)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("codes", codes);
+            parameters.Add("names", names);
+
+            // Compose sql command
+            var sqlCommand = @"
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                FROM AppDistricts
+                WHERE (Code in @codes OR Name in @names)
+                ORDER BY Code ASC
+                ";
+
+            // Get data
+            var districts = await dbConnection.QueryAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return districts.ToList();
         }
     }
 }

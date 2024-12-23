@@ -5,6 +5,9 @@
     /// </summary>
     public enum DistrictLevel
     {
-        District
+        District, // Quận
+        County, // Huyện
+        City, // Thành phố
+        Town, // Thị trấn
     }
 }

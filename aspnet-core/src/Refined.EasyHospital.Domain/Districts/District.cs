@@ -1,5 +1,4 @@
 ﻿using Refined.EasyHospital.Base;
-using System;
 
 namespace Refined.EasyHospital.Districts
 {
@@ -10,6 +9,6 @@ namespace Refined.EasyHospital.Districts
     {
         public DistrictLevel Level { get; set; }
 
-        public Guid ProvinceId { get; set; }
+        public string ProvinceCode { get; set; } = string.Empty;
     }
 }
