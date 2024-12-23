@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Refined.EasyHospital.Base;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -13,12 +14,17 @@ namespace Refined.EasyHospital.Districts
         IRepository<District, Guid> districtRepository,
         IDistrictDapperRepository districtDapperRepository)
         :
-        CrudAppService<District, DistrictDto, Guid, PagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>(districtRepository),
+        CrudAppService<District, DistrictDto, Guid, LocalityPagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>(districtRepository),
         IDistrictAppService
     {
-        public override async Task<PagedResultDto<DistrictDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<DistrictDto>> GetListAsync(LocalityPagedAndSortedResultRequestDto input)
         {
-            var districts = await districtDapperRepository.GetManyAsync();
+            // Extract pagination and filter parameters
+            var search = input.Search;
+            var pageSize = input.MaxResultCount;
+            var currentPage = input.SkipCount / input.MaxResultCount + 1;
+
+            var districts = await districtDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var districtDtos = await MapToGetListOutputDtosAsync(districts);
 

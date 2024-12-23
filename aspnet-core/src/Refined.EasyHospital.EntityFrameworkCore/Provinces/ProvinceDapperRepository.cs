@@ -19,18 +19,29 @@ namespace Refined.EasyHospital.Provinces
         ITransientDependency,
         IProvinceDapperRepository
     {
-        public async Task<List<Province>> GetManyAsync()
+        public async Task<List<Province>> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             using (var dbConnection = await GetDbConnectionAsync())
             {
                 // Validate sql parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("search", $"%{search}%");
+                parameters.Add("pageSize", pageSize);
+                parameters.Add("offset", (currentPage - 1) * pageSize);
 
                 // Compose sql command
-                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppProvinces";
+                //var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppProvinces";
+                var sqlCommand = @"
+                    SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                    FROM AppProvinces
+                    WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                    ORDER BY Code ASC
+                    LIMIT @pageSize OFFSET @offset
+                    ";
 
                 // Get data
-                var provinces = await dbConnection.QueryAsync<Province>(sqlCommand, transaction: await GetDbTransactionAsync());
+                var provinces = await dbConnection.QueryAsync<Province>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
                 // Return result
                 return provinces.ToList();

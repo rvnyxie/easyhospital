@@ -20,18 +20,29 @@ namespace Refined.EasyHospital.Districts
         ITransientDependency,
         IDistrictDapperRepository
     {
-        public async Task<List<District>> GetManyAsync()
+        public async Task<List<District>> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             using (var dbConnection = await GetDbConnectionAsync())
             {
                 // Validate sql parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("search", $"%{search}%");
+                parameters.Add("pageSize", pageSize);
+                parameters.Add("offset", (currentPage - 1) * pageSize);
 
                 // Compose sql command
-                var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts";
+                //var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceId FROM AppDistricts";
+                var sqlCommand = @"
+                    SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                    FROM AppDistricts
+                    WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                    ORDER BY Code ASC
+                    LIMIT @pageSize OFFSET @offset
+                    ";
 
                 // Get data
-                var districts = await dbConnection.QueryAsync<District>(sqlCommand, transaction: await GetDbTransactionAsync());
+                var districts = await dbConnection.QueryAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
                 // Return result
                 return districts.ToList();

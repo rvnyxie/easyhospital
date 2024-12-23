@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Refined.EasyHospital.Base;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -15,12 +16,18 @@ namespace Refined.EasyHospital.Provinces
         IRepository<Province, Guid> provinceRepository,
         IProvinceDapperRepository provinceDapperRepository)
         :
-        CrudAppService<Province, ProvinceDto, Guid, PagedAndSortedResultRequestDto, ProvinceCreateDto, ProvinceUpdateDto>(provinceRepository),
+        CrudAppService<Province, ProvinceDto, Guid, LocalityPagedAndSortedResultRequestDto, ProvinceCreateDto, ProvinceUpdateDto>(provinceRepository),
         IProvinceAppService
     {
-        public override async Task<PagedResultDto<ProvinceDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+
+        public override async Task<PagedResultDto<ProvinceDto>> GetListAsync(LocalityPagedAndSortedResultRequestDto input)
         {
-            var provinces = await provinceDapperRepository.GetManyAsync();
+            // Extract pagination and filter parameters
+            var search = input.Search;
+            var pageSize = input.MaxResultCount;
+            var currentPage = input.SkipCount / input.MaxResultCount + 1;
+
+            var provinces = await provinceDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var totalCount = provinces.Count();
 

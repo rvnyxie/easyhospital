@@ -1,5 +1,5 @@
-﻿using System;
-using Volo.Abp.Application.Dtos;
+﻿using Refined.EasyHospital.Base;
+using System;
 using Volo.Abp.Application.Services;
 
 namespace Refined.EasyHospital.Communes
@@ -8,7 +8,7 @@ namespace Refined.EasyHospital.Communes
     /// App service interface for Commune
     /// </summary>
     public interface ICommuneAppService :
-        ICrudAppService<CommuneDto, Guid, PagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>
+        ICrudAppService<CommuneDto, Guid, LocalityPagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>
     {
     }
 }

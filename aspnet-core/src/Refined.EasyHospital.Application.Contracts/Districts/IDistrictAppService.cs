@@ -1,5 +1,5 @@
-﻿using System;
-using Volo.Abp.Application.Dtos;
+﻿using Refined.EasyHospital.Base;
+using System;
 using Volo.Abp.Application.Services;
 
 namespace Refined.EasyHospital.Districts
@@ -7,7 +7,7 @@ namespace Refined.EasyHospital.Districts
     /// <summary>
     /// App service inteface for District
     /// </summary>
-    public interface IDistrictAppService : ICrudAppService<DistrictDto, Guid, PagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>
+    public interface IDistrictAppService : ICrudAppService<DistrictDto, Guid, LocalityPagedAndSortedResultRequestDto, DistrictCreateDto, DistrictUpdateDto>
     {
     }
 }

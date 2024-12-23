@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Refined.EasyHospital.Base;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -16,13 +17,18 @@ namespace Refined.EasyHospital.Communes
         IRepository<Commune, Guid> communeRepository,
         ICommuneDapperRepository communeDapperRepository)
         :
-        CrudAppService<Commune, CommuneDto, Guid, PagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>(communeRepository),
+        CrudAppService<Commune, CommuneDto, Guid, LocalityPagedAndSortedResultRequestDto, CommuneCreateDto, CommuneUpdateDto>(communeRepository),
         ITransientDependency,
         ICommuneAppService
     {
-        public override async Task<PagedResultDto<CommuneDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<CommuneDto>> GetListAsync(LocalityPagedAndSortedResultRequestDto input)
         {
-            var communes = await communeDapperRepository.GetManyAsync();
+            // Extract pagination and filter parameters
+            var search = input.Search;
+            var pageSize = input.MaxResultCount;
+            var currentPage = input.SkipCount / input.MaxResultCount + 1;
+
+            var communes = await communeDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var communeDtos = await MapToGetListOutputDtosAsync(communes);
 
