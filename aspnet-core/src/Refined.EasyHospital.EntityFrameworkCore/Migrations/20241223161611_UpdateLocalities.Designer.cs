@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Refined.EasyHospital.Migrations
 {
     [DbContext(typeof(EasyHospitalDbContext))]
-    [Migration("20241223110742_AllowDuplicateNameInDistrictAndCommune")]
-    partial class AllowDuplicateNameInDistrictAndCommune
+    [Migration("20241223161611_UpdateLocalities")]
+    partial class UpdateLocalities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
