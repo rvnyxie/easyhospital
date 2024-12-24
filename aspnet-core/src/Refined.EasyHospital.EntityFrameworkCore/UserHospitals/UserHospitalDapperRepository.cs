@@ -64,5 +64,50 @@ namespace Refined.EasyHospital.UserHospitals
             // Return result
             return userHospital;
         }
+
+        public async Task<UserHospital> GetByUserIdAndHospitalIdAsync(Guid userId, Guid hospitalId)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId);
+            parameters.Add("hospitalId", hospitalId);
+
+            // Compose sql command
+            var sqlCommand = @"
+                SELECT Id, UserId, HospitalId FROM AppUserHospitals
+                WHERE 
+                    (@userId IS NULL OR UserID = @userID)
+                    AND (@hospitalId IS NULL OR HospitalId = @hospitalId)
+                ";
+
+            // Get data
+            var userHospital = await dbConnection.QueryFirstOrDefaultAsync<UserHospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return userHospital;
+        }
+
+        public async Task<UserHospital> GetByUserIdAsync(Guid userId)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId);
+
+            // Compose sql command
+            var sqlCommand = @"
+                SELECT Id, UserId, HospitalId FROM AppUserHospitals WHERE UserID = @userID";
+
+            // Get data
+            var userHospital = await dbConnection.QueryFirstOrDefaultAsync<UserHospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return userHospital;
+        }
     }
 }

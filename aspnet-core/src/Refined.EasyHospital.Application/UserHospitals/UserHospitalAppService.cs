@@ -46,5 +46,22 @@ namespace Refined.EasyHospital.UserHospitals
 
             return userHospitalDto;
         }
+
+        public override async Task<UserHospitalDto> CreateAsync(UserHospitalCreateDto userHospitalCreateDto)
+        {
+            var userHospital = MapToEntity(userHospitalCreateDto);
+
+            // Validate business
+            var foundUserHospital = await userHospitalDapperRepository.GetByUserIdAsync(userHospitalCreateDto.UserId);
+
+            if (foundUserHospital != null)
+            {
+                throw new Exception("Unable to create new user-hospital. User with this ID already belongs to a hospital");
+            }
+
+            var createdHospital = await userHospitalRepository.InsertAsync(userHospital);
+
+            return MapToGetListOutputDto(createdHospital);
+        }
     }
 }
