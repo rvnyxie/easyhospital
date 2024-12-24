@@ -25,6 +25,36 @@ const routes: Routes = [
     loadChildren: () =>
       import('@abp/ng.setting-management').then(m => m.SettingManagementModule.forLazy()),
   },
+  {
+    path: 'provinces',
+    loadChildren: () =>
+      import('./province/province.module').then(m => m.ProvinceModule)
+  },
+  {
+    path: 'districts',
+    loadChildren: () =>
+      import('./district/district.module').then(m => m.DistrictModule)
+  },
+  {
+    path: 'communes',
+    loadChildren: () =>
+      import('./commune/commune.module').then(m => m.CommuneModule)
+  },
+  {
+    path: 'hospitals',
+    loadChildren: () =>
+      import('./hospital/hospital.module').then(m => m.HospitalModule)
+  },
+  {
+    path: 'patients',
+    loadChildren: () =>
+      import('./patient/patient.module').then(m => m.PatientModule)
+  },
+  {
+    path: 'user-hospitals',
+    loadChildren: () =>
+      import('./user-hospital/user-hospital.module').then(m => m.UserHospitalModule)
+  },
 ];
 
 @NgModule({
