@@ -6,6 +6,6 @@
     public enum ProvinceLevel
     {
         Province,
-        MunipicalCity
+        MunicipalCity
     }
 }

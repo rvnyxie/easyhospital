@@ -25,7 +25,7 @@ namespace Refined.EasyHospital.Helpers
                     level = ProvinceLevel.Province;
                     return true;
                 case "Thành phố Trung ương":
-                    level = ProvinceLevel.MunipicalCity;
+                    level = ProvinceLevel.MunicipalCity;
                     return true;
                 default:
                     return false;
