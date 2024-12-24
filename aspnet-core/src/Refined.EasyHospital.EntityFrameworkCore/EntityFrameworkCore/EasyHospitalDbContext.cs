@@ -2,6 +2,7 @@
 using Refined.EasyHospital.Communes;
 using Refined.EasyHospital.Districts;
 using Refined.EasyHospital.Hospitals;
+using Refined.EasyHospital.Patients;
 using Refined.EasyHospital.Provinces;
 using Refined.EasyHospital.UserHospitals;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -67,6 +68,7 @@ public class EasyHospitalDbContext :
 
     public DbSet<Hospital> Hospitals { get; set; }
     public DbSet<UserHospital> UserHospitals { get; set; }
+    public DbSet<Patient> Patients { get; set; }
 
     #endregion
 
@@ -172,6 +174,23 @@ public class EasyHospitalDbContext :
             // Propery constraints
             b.Property(p => p.UserId).IsRequired();
             b.Property(p => p.HospitalId).IsRequired();
+        });
+
+        // Patient
+        builder.Entity<Patient>(b =>
+        {
+            b.ToTable(EasyHospitalConsts.DbTablePrefix + "Patients", EasyHospitalConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Property constraints
+            b.Property(p => p.Code).IsRequired();
+            b.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            b.Property(p => p.ProvinceCode).IsRequired();
+            b.Property(p => p.DistrictCode).IsRequired();
+            b.Property(p => p.CommuneCode).IsRequired();
+            b.Property(p => p.HospitalId).IsRequired();
+
+            b.HasIndex(p => p.Code).IsUnique();
         });
     }
 }

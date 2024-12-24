@@ -20,6 +20,7 @@ namespace Refined.EasyHospital.Hospitals
     {
         public override async Task<PagedResultDto<HospitalDto>> GetListAsync(HospitalPagedAndSortedResultRequestDto input)
         {
+            // Extract pagination and filter parameters
             var search = input.Search;
             var provinceCode = input.ProvinceCode;
             var districtCode = input.DistrictCode;
