@@ -34,9 +34,43 @@ namespace Refined.EasyHospital.Hospitals
 
             // Compose sql command
             var sqlCommand = @"
-                SELECT Id, Name, ProvinceCode, DistrictCode, CommuneCode 
+                SELECT Id, Name, Address, ProvinceCode, DistrictCode, CommuneCode 
                 FROM AppHospitals
-                WHERE (@search IS NULL OR Name LIKE @search)
+                WHERE (@search IS NULL OR Name LIKE @search OR Address LIKE @search)
+                ORDER BY Name ASC
+                LIMIT @pageSize OFFSET @offset
+                ";
+
+            // Get data
+            var hospitals = await dbConnection.QueryAsync<Hospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return hospitals.ToList();
+        }
+
+        public async Task<List<Hospital>> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("search", $"%{search}%");
+            parameters.Add("provinceCode", provinceCode);
+            parameters.Add("districtCode", districtCode);
+            parameters.Add("communeCode", communeCode);
+            parameters.Add("pageSize", pageSize);
+            parameters.Add("offset", (currentPage - 1) * pageSize);
+
+            // Compose sql command
+            var sqlCommand = @"
+                SELECT Id, Name, Address, ProvinceCode, DistrictCode, CommuneCode 
+                FROM AppHospitals
+                WHERE 
+                    (@search IS NULL OR Name LIKE @search OR Address LIKE @search)
+                    AND (@provinceCode IS NULL OR ProvinceCode = @provinceCode)
+                    AND (@districtCode IS NULL OR DistrictCode = @districtCode)
+                    AND (@communeCode IS NULL OR CommuneCode = @communeCode)
                 ORDER BY Name ASC
                 LIMIT @pageSize OFFSET @offset
                 ";

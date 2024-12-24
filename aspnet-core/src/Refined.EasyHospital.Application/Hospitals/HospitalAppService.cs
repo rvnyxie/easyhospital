@@ -1,5 +1,4 @@
-﻿using Refined.EasyHospital.Base;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -16,16 +15,19 @@ namespace Refined.EasyHospital.Hospitals
         IRepository<Hospital, Guid> hospitalRepository,
         IHospitalDapperRepository hospitalDapperRepository)
         :
-        CrudAppService<Hospital, HospitalDto, Guid, ExtendedPagedAndSortedResultRequestDto, HospitalCreateDto, HospitalUpdateDto>(hospitalRepository),
+        CrudAppService<Hospital, HospitalDto, Guid, HospitalPagedAndSortedResultRequestDto, HospitalCreateDto, HospitalUpdateDto>(hospitalRepository),
         IHospitalAppService
     {
-        public override async Task<PagedResultDto<HospitalDto>> GetListAsync(ExtendedPagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<HospitalDto>> GetListAsync(HospitalPagedAndSortedResultRequestDto input)
         {
             var search = input.Search;
+            var provinceCode = input.ProvinceCode;
+            var districtCode = input.DistrictCode;
+            var communeCode = input.CommuneCode;
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var hospitals = await hospitalDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            var hospitals = await hospitalDapperRepository.GetManyHospitalWithPaginationAndSearch(search, pageSize, currentPage, provinceCode, districtCode, communeCode);
 
             var hospitalDtos = await MapToGetListOutputDtosAsync(hospitals);
 
