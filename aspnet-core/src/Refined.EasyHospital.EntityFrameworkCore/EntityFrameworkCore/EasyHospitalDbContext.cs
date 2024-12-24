@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Refined.EasyHospital.Communes;
 using Refined.EasyHospital.Districts;
+using Refined.EasyHospital.Hospitals;
 using Refined.EasyHospital.Provinces;
+using Refined.EasyHospital.UserHospitals;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -62,6 +64,9 @@ public class EasyHospitalDbContext :
     public DbSet<Province> Provinces { get; set; }
     public DbSet<District> Districts { get; set; }
     public DbSet<Commune> Communes { get; set; }
+
+    public DbSet<Hospital> Hospitals { get; set; }
+    public DbSet<UserHospital> UserHospitals { get; set; }
 
     #endregion
 
@@ -141,6 +146,32 @@ public class EasyHospitalDbContext :
             b.Property(p => p.Description).HasMaxLength(512);
 
             b.HasIndex(p => p.Code).IsUnique();
+        });
+
+        // Hospital
+        builder.Entity<Hospital>(b =>
+        {
+            b.ToTable(EasyHospitalConsts.DbTablePrefix + "Hospitals", EasyHospitalConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Property constraints
+            b.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            b.Property(p => p.ProvinceCode).IsRequired();
+            b.Property(p => p.DistrictCode).IsRequired();
+            b.Property(p => p.CommuneCode).IsRequired();
+
+            b.HasIndex(p => new { p.ProvinceCode, p.DistrictCode, p.CommuneCode });
+        });
+
+        // UserHospital
+        builder.Entity<UserHospital>(b =>
+        {
+            b.ToTable(EasyHospitalConsts.DbTablePrefix + "UserHospitals", EasyHospitalConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Propery constraints
+            b.Property(p => p.UserId).IsRequired();
+            b.Property(p => p.HospitalId).IsRequired();
         });
     }
 }

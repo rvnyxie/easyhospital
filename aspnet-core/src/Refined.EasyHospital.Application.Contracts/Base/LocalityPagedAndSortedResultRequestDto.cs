@@ -1,12 +1,9 @@
-﻿using Volo.Abp.Application.Dtos;
-
-namespace Refined.EasyHospital.Base
+﻿namespace Refined.EasyHospital.Base
 {
     /// <summary>
     /// Paged result request DTO for Locality entities
     /// </summary>
-    public class LocalityPagedAndSortedResultRequestDto : PagedAndSortedResultRequestDto
+    public class LocalityPagedAndSortedResultRequestDto : ExtendedPagedAndSortedResultRequestDto
     {
-        public string? Search { get; set; }
     }
 }
