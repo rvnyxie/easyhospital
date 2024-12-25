@@ -1,0 +1,21 @@
+.custom-heading {
+  display: flex;
+  justify-content: space-between;
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  button {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    align-items: center;
+  }
+}

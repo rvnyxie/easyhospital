@@ -1,1 +1,85 @@
-<p>province works!</p>
+<div>
+  <!-- Heading -->
+  <div class='custom-heading'>
+    <h1>Province</h1>
+    <button nz-button nzType='primary' (click)='handleAdding()'>Add</button>
+  </div>
+
+  <!-- Table -->
+  <nz-table
+    #provinceTable
+    [nzData]='province.items'
+    [nzBordered]='true'
+    [nzSize]='"middle"'
+    [nzShowPagination]='true'
+    [nzPaginationPosition]='"bottom"'
+    [nzTotal]='province.totalCount'
+    [nzPageSize]='query.maxResultCount'
+    [nzScroll]='{ x: "1000px" }'
+    (nzQueryParams)='onQueryParamsChange($event)'
+  >
+    <thead>
+      <tr>
+        <th nzWidth="50px">STT</th>
+        <th nzShowSort nzWidth="100px">Code</th>
+        <th nzShowSort nzWidth="150px">Name</th>
+        <th nzWidth="200px">English Name</th>
+        <th nzShowSort nzWidth="100px">Level</th>
+        <th nzWidth="150px">Decision Date</th>
+        <th nzWidth="150px">Effective Date</th>
+        <th nzWidth="100px">Population</th>
+        <th nzWidth="100px">Area</th>
+        <th nzWidth="200px">Description</th>
+        <th nzWidth="100px">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let province of provinceTable.data; let idx = index'>
+        <td>{{ idx + 1 }}</td>
+        <td>{{ province.code }}</td>
+        <td>{{ province.name }}</td>
+        <td>{{ province.englishName }}</td>
+        <td>{{ province.level }}</td>
+        <td>{{ province.decisionDate }}</td>
+        <td>{{ province.effectiveDate }}</td>
+        <td>{{ province.population }}</td>
+        <td>{{ province.area }}</td>
+        <td>{{ province.description }}</td>
+        <td class='table-actions'>
+          <button
+            nz-button
+            nzType="default"
+            nzSize="small"
+            class="action-button"
+            (click)="editProvince(province)"
+          >
+            <i class="fa fa-edit"></i> Edit
+          </button>
+          <button
+            nz-button
+            nzType="default"
+            nzDanger
+            nzSize="small"
+            class="action-button"
+            (click)="deleteProvince(province)"
+          >
+            <i class="fa fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <!-- Modal -->
+  <nz-modal
+    [nzVisible]='isModalOpen'
+    nzTitle='Test title'
+    [nzCentered]='true'
+    (nzOnCancel)='handleModalCancel()'
+    (nzOnOk)='handleModelConfirm()'
+  >
+    <ng-container *nzModalContent>
+      <p>Content here</p>
+    </ng-container>
+  </nz-modal>
+</div>

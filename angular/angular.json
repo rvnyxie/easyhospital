@@ -30,6 +30,7 @@
             "allowedCommonJsDependencies": ["chart.js", "js-sha256"],
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               {
                 "input": "node_modules/@volo/ngx-lepton-x.lite/assets/css/bootstrap-dim.css",
                 "inject": false,
@@ -110,6 +111,11 @@
                 "inject": true,
                 "bundleName": "ngx-datatable-material"
               },
+              {
+                "input": "node_modules/@swimlane/ngx-datatable/themes/material.css",
+                "inject": true,
+                "bundleName": "ngx-datatable-material"
+              },
               "src/styles.scss"
             ],
             "scripts": []
@@ -174,7 +180,10 @@
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "src/styles.scss"
+            ],
             "scripts": []
           }
         },
