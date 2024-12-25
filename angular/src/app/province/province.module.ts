@@ -6,7 +6,8 @@ import { SharedModule } from '../shared/shared.module';
 import { NzTableModule, NzThAddOnComponent, NzThMeasureDirective } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalContentDirective, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
-
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputDirective } from 'ng-zorro-antd/input';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,9 @@ import { NzModalContentDirective, NzModalModule, NzModalService } from 'ng-zorro
     NzThAddOnComponent,
     NzButtonModule,
     NzModalModule,
-    NzModalContentDirective
+    NzModalContentDirective,
+    NzFormModule,
+    NzInputDirective
   ],
   providers: [
     NzModalService
