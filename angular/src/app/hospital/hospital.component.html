@@ -1,1 +1,123 @@
-<p>hospital works!</p>
+<div>
+  <!-- Heading -->
+  <div class='custom-heading'>
+    <h1>Hospital</h1>
+    <button nz-button nzType='primary' (click)='openModal("create")'>Add</button>
+  </div>
+
+  <!-- Table -->
+  <nz-table
+    #hospitalTable
+    [nzData]='hospital.items'
+    [nzBordered]='true'
+    [nzSize]='"middle"'
+    [nzShowPagination]='false'
+    [nzPageSize]='query.maxResultCount'
+    [nzScroll]='{ x: "1000px" }'
+  >
+    <thead>
+    <tr>
+      <th nzWidth="50px">STT</th>
+      <th nzShowSort nzWidth="150px">Name</th>
+      <th nzWidth="200px">Province Code</th>
+      <th nzWidth="200px">District Code</th>
+      <th nzWidth="200px">Commune Code</th>
+      <th nzWidth="180px">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor='let hospital of hospitalTable.data; let idx = index'>
+      <td>{{ query.skipCount + 1 + idx }}</td>
+      <td>{{ hospital.name }}</td>
+      <td>{{ hospital.provinceCode }}</td>
+      <td>{{ hospital.districtCode }}</td>
+      <td>{{ hospital.communeCode }}</td>
+      <td class='table-actions'>
+        <button
+          nz-button
+          nzType="default"
+          nzSize="small"
+          class="action-button"
+          (click)="openModal('update', hospital)"
+        >
+          <i class="fa fa-edit"></i> Edit
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          nzDanger
+          nzSize="small"
+          class="action-button"
+          (click)="openModal('delete', hospital)"
+        >
+          <i class="fa fa-trash"></i> Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+
+  <!-- Pagination -->
+  <div class='navigation'>
+    <nz-pagination
+      [(nzPageIndex)]="query.pageIndex"
+      [nzTotal]="hospital.totalCount"
+      [(nzPageSize)]="query.maxResultCount"
+      [nzShowTotal]="rangeTemplate"
+      nzShowSizeChanger
+      nzShowQuickJumper
+      (nzPageIndexChange)='onPageIndexChange($event)'
+      (nzPageSizeChange)='onPageSizeChange($event)'
+    ></nz-pagination>
+    <ng-template #rangeTemplate let-range="range" let-total>
+      {{ range[0] }}-{{ range[1] }} of {{ total }} items
+    </ng-template>
+  </div>
+
+  <!-- Modal -->
+  <nz-modal
+    [(nzVisible)]="isModalOpen"
+    [nzTitle]="modalTitle"
+    [nzCentered]="true"
+    (nzOnCancel)="handleModalCancel()"
+    (nzOnOk)="handleModalConfirm()"
+  >
+    <ng-container *nzModalContent>
+      <!-- Create/Update Form -->
+      <form
+        *ngIf="isFormMode"
+        [formGroup]="hospitalForm"
+        nzLayout="vertical"
+        (ngSubmit)="handleModalConfirm()" nz-form
+      >
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="name">Name</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="name" name="name" type="text" id="name" placeholder="Enter hospital name" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="provinceCode">Province Code</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="provinceCode" name="provinceCode" type="text" id="provinceCode" placeholder="Enter province code"  />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="districtCode">District Code</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="districtCode" name="districtCode" type="text" id="districtCode" placeholder="Enter district code" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="communeCode">Commune COde</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="communeCode" name="communeCode" type="text" id="communeCode" placeholder="Enter commune code" />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+
+      <!-- Delete Confirmation -->
+      <p *ngIf="!isFormMode">{{ deleteMessage }}</p>
+    </ng-container>
+  </nz-modal>
+</div>
