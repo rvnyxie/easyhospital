@@ -5,4 +5,7 @@ export interface ExtendedPagedAndSortedResultRequestDto extends PagedAndSortedRe
 }
 
 export interface LocalityPagedAndSortedResultRequestDto extends ExtendedPagedAndSortedResultRequestDto {
+  provinceCode?: string;
+  districtCode?: string;
+  communeCode?: string;
 }

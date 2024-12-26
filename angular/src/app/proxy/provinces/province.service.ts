@@ -40,7 +40,7 @@ export class ProvinceService {
     this.restService.request<any, PagedResultDto<ProvinceDto>>({
       method: 'GET',
       url: '/api/app/province',
-      params: { search: input.search, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { provinceCode: input.provinceCode, districtCode: input.districtCode, communeCode: input.communeCode, search: input.search, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
   
