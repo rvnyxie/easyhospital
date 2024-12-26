@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { PatientDto, PatientService } from '@proxy/patients';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserHospitalDto, UserHospitalService } from '@proxy/user-hospitals';
 
