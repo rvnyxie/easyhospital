@@ -5,7 +5,7 @@ import { HospitalDto, HospitalService } from '@proxy/hospitals';
 import { ProvinceDto, ProvinceService } from '@proxy/provinces';
 import { DistrictDto, DistrictService } from '@proxy/districts';
 import { CommuneDto, CommuneService } from '@proxy/communes';
-import { ExtendedPagedAndSortedResultRequestDto, LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
+import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
 
 @Component({
   selector: 'app-hospital',
@@ -14,41 +14,30 @@ import { ExtendedPagedAndSortedResultRequestDto, LocalityPagedAndSortedResultReq
   providers: [ListService],
 })
 export class HospitalComponent implements OnInit {
-  hospital = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
-  query = {
+  // Default queries
+  readonly defaultLocalityQuery: LocalityPagedAndSortedResultRequestDto = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 100,
     sorting: '',
     search: null,
-    pageIndex: 1,
     provinceCode: null,
     districtCode: null,
     communeCode: null,
+  }
+  readonly defaultHospitalQuery = {
+    ...this.defaultLocalityQuery,
+    pageIndex: 1,
+    maxResultCount: 10
   };
 
-  provinceQuery: LocalityPagedAndSortedResultRequestDto = {
-    skipCount: 0,
-    maxResultCount: 100,
-    sorting: '',
-    search: null,
-  }
+  // Queries
+  query = { ...this.defaultHospitalQuery };
+  provinceQuery = { ...this.defaultLocalityQuery };
+  districtQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  communeQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
 
-  districtQuery: LocalityPagedAndSortedResultRequestDto = {
-    skipCount: 0,
-    maxResultCount: 100,
-    sorting: '',
-    search: null,
-    provinceCode: null,
-  }
-
-  communeQuery: LocalityPagedAndSortedResultRequestDto = {
-    skipCount: 0,
-    maxResultCount: 100,
-    sorting: '',
-    search: null,
-    districtCode: null,
-  }
-
+  // Result variables
+  hospital = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
   provinces = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
   districts = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
   communes = { totalCount : 0, items: [] } as PagedResultDto<CommuneDto>;
@@ -160,7 +149,7 @@ export class HospitalComponent implements OnInit {
   // Commune-related methods
 
   loadCommunes() {
-    if (!this.communeQuery.communeCode) return;
+    if (!this.communeQuery.districtCode) return;
 
     this.communeService.getList(this.communeQuery).subscribe((response) => {
       this.communes = response;
@@ -188,13 +177,10 @@ export class HospitalComponent implements OnInit {
 
   // Search form methods
   resetSearch() {
-    this.query.search = null;
-    this.query.provinceCode = null;
-    this.query.districtCode = null;
-    this.query.communeCode = null;
-
-    this.districtQuery.districtCode = null;
-    this.communeQuery.districtCode = null;
+    this.query = { ...this.defaultHospitalQuery };
+    this.provinceQuery = { ...this.defaultLocalityQuery };
+    this.districtQuery = { ...this.defaultLocalityQuery };
+    this.communeQuery = { ...this.defaultLocalityQuery };
 
     this.loadProvinces();
     this.list.get();
