@@ -42,9 +42,9 @@ export class PatientComponent implements OnInit {
   }
 
   ngOnInit() {
-    const communeStreamCreator = () => this.patientService.getList(this.query);
+    const patientStreamCreator = () => this.patientService.getList(this.query);
 
-    this.list.hookToQuery(communeStreamCreator).subscribe((response) => {
+    this.list.hookToQuery(patientStreamCreator).subscribe((response) => {
       this.patient = response;
       console.log(this.patient);
     });
