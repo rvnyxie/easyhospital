@@ -30,11 +30,9 @@ namespace Refined.EasyHospital.Districts
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var districts = await districtDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            var (districts, totalCount) = await districtDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var districtDtos = await MapToGetListOutputDtosAsync(districts);
-
-            var totalCount = districtDtos.Count;
 
             return new PagedResultDto<DistrictDto>(
                 totalCount,

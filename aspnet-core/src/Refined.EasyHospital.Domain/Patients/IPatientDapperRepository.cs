@@ -20,8 +20,8 @@ namespace Refined.EasyHospital.Patients
         /// <param name="districtCode">District Code</param>
         /// <param name="communeCode">Commune Code</param>
         /// <param name="hospitalId">Hospital ID</param>
-        /// <returns></returns>
-        Task<List<Patient>> GetManyPatientsWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode, Guid hospitalId);
+        /// <returns>List of patients and total quantity of patient</returns>
+        Task<(List<Patient>, int)> GetManyPatientsWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode, Guid hospitalId);
 
         /// <summary>
         /// Asynchronously get patient by ID

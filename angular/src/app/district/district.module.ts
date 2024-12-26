@@ -8,6 +8,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzFlexDirective } from 'ng-zorro-antd/flex';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
     NzModalModule,
     NzModalContentDirective,
     NzFormModule,
-    NzInputDirective
+    NzInputDirective,
+    NzPaginationModule,
+    NzFlexDirective
   ]
 })
 export class DistrictModule { }

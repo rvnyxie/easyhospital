@@ -21,12 +21,12 @@ namespace Refined.EasyHospital.Patients
         IScopedDependency,
         IPatientDapperRepository
     {
-        public Task<List<Patient>> GetManyAsync(string? search, int pageSize, int currentPage)
+        public Task<(List<Patient>, int)> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<Patient>> GetManyPatientsWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode, Guid hospitalId)
+        public async Task<(List<Patient>, int)> GetManyPatientsWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode, Guid hospitalId)
         {
             // Get connection
             var dbConnection = await GetDbConnectionAsync();
@@ -42,7 +42,18 @@ namespace Refined.EasyHospital.Patients
             parameters.Add("offset", (currentPage - 1) * pageSize);
 
             // Compose sql command
-            var sqlCommand = @"
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppPatients
+                WHERE 
+                    (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                    AND (@provinceCode IS NULL OR ProvinceCode = @provinceCode)
+                    AND (@districtCode IS NULL OR DistrictCode = @districtCode)
+                    AND (@communeCode IS NULL OR CommuneCode = @communeCode)
+                    AND (HospitalId = @hospitalId)
+                ";
+
+            var dataSqlCommand = @"
                 SELECT Id, Code, Name, ProvinceCode, DistrictCode, CommuneCode, HospitalId 
                 FROM AppPatients
                 WHERE 
@@ -56,10 +67,12 @@ namespace Refined.EasyHospital.Patients
                 ";
 
             // Get data
-            var patients = await dbConnection.QueryAsync<Patient>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            var patients = await dbConnection.QueryAsync<Patient>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
             // Return result
-            return patients.ToList();
+            return (patients.ToList(), totalCountWithSearch);
         }
 
         public Task<Patient> GetAsync(Guid id)

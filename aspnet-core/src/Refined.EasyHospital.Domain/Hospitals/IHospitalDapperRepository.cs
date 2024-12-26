@@ -20,6 +20,6 @@ namespace Refined.EasyHospital.Hospitals
         /// <param name="districtCode">District Code</param>
         /// <param name="communeCode">Commune Code</param>
         /// <returns></returns>
-        Task<List<Hospital>> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode);
+        Task<(List<Hospital>, int)> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode);
     }
 }

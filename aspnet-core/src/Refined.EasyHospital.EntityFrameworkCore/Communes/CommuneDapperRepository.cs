@@ -21,7 +21,7 @@ namespace Refined.EasyHospital.Communes
         ITransientDependency,
         ICommuneDapperRepository
     {
-        public async Task<List<Commune>> GetManyAsync(string? search, int pageSize, int currentPage)
+        public async Task<(List<Commune>, int)> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             using (var dbConnection = await GetDbConnectionAsync())
@@ -33,8 +33,13 @@ namespace Refined.EasyHospital.Communes
                 parameters.Add("offset", (currentPage - 1) * pageSize);
 
                 // Compose sql command
-                //var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, DistrictId FROM AppCommunes";
-                var sqlCommand = @"
+                var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppCommunes
+                WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                ";
+
+                var dataSqlCommand = @"
                     SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
                     FROM AppCommunes
                     WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
@@ -43,10 +48,12 @@ namespace Refined.EasyHospital.Communes
                     ";
 
                 // Get data
-                var communes = await dbConnection.QueryAsync<Commune>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+                var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+                var communes = await dbConnection.QueryAsync<Commune>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
                 // Return result
-                return communes.ToList();
+                return (communes.ToList(), totalCountWithSearch);
             }
         }
 

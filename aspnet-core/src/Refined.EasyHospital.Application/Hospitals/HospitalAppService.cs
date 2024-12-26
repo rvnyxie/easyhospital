@@ -28,11 +28,9 @@ namespace Refined.EasyHospital.Hospitals
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var hospitals = await hospitalDapperRepository.GetManyHospitalWithPaginationAndSearch(search, pageSize, currentPage, provinceCode, districtCode, communeCode);
+            var (hospitals, totalCount) = await hospitalDapperRepository.GetManyHospitalWithPaginationAndSearch(search, pageSize, currentPage, provinceCode, districtCode, communeCode);
 
             var hospitalDtos = await MapToGetListOutputDtosAsync(hospitals);
-
-            var totalCount = hospitalDtos.Count;
 
             return new PagedResultDto<HospitalDto>(
                 totalCount,

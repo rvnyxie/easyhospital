@@ -10,13 +10,9 @@
     #districtTable
     [nzData]='district.items'
     [nzBordered]='true'
+    [nzShowPagination]='false'
     [nzSize]='"middle"'
-    [nzShowPagination]='true'
-    [nzPaginationPosition]='"bottom"'
-    [nzTotal]='district.totalCount'
-    [nzPageSize]='query.maxResultCount'
     [nzScroll]='{ x: "1000px" }'
-    (nzQueryParams)='onQueryParamsChange($event)'
   >
     <thead>
     <tr>
@@ -34,24 +30,24 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor='let province of districtTable.data; let idx = index'>
-      <td>{{ idx + 1 }}</td>
-      <td>{{ province.code }}</td>
-      <td>{{ province.name }}</td>
-      <td>{{ province.englishName }}</td>
-      <td>{{ province.level }}</td>
-      <td>{{ province.decisionDate }}</td>
-      <td>{{ province.effectiveDate }}</td>
-      <td>{{ province.population }}</td>
-      <td>{{ province.area }}</td>
-      <td>{{ province.description }}</td>
+    <tr *ngFor='let district of districtTable.data; let idx = index'>
+      <td>{{ query.skipCount + 1 + idx }}</td>
+      <td>{{ district.code }}</td>
+      <td>{{ district.name }}</td>
+      <td>{{ district.englishName }}</td>
+      <td>{{ district.level }}</td>
+      <td>{{ district.decisionDate }}</td>
+      <td>{{ district.effectiveDate }}</td>
+      <td>{{ district.population }}</td>
+      <td>{{ district.area }}</td>
+      <td>{{ district.description }}</td>
       <td class='table-actions'>
         <button
           nz-button
           nzType="default"
           nzSize="small"
           class="action-button"
-          (click)="openModal('update', province)"
+          (click)="openModal('update', district)"
         >
           <i class="fa fa-edit"></i> Edit
         </button>
@@ -61,7 +57,7 @@
           nzDanger
           nzSize="small"
           class="action-button"
-          (click)="openModal('delete', province)"
+          (click)="openModal('delete', district)"
         >
           <i class="fa fa-trash"></i> Delete
         </button>
@@ -69,6 +65,23 @@
     </tr>
     </tbody>
   </nz-table>
+
+  <!-- Pagination -->
+  <div class='navigation'>
+    <nz-pagination
+      [(nzPageIndex)]="query.pageIndex"
+      [nzTotal]="district.totalCount"
+      [(nzPageSize)]="query.maxResultCount"
+      [nzShowTotal]="rangeTemplate"
+      nzShowSizeChanger
+      nzShowQuickJumper
+      (nzPageIndexChange)='onPageIndexChange($event)'
+      (nzPageSizeChange)='onPageSizeChange($event)'
+    ></nz-pagination>
+    <ng-template #rangeTemplate let-range="range" let-total>
+      {{ range[0] }}-{{ range[1] }} of {{ total }} items
+    </ng-template>
+  </div>
 
   <!-- Modal -->
   <nz-modal

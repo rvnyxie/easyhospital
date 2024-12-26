@@ -21,7 +21,7 @@ namespace Refined.EasyHospital.UserHospitals
         IScopedDependency,
         IUserHospitalDapperRepository
     {
-        public async Task<List<UserHospital>> GetManyAsync(string? search, int pageSize, int currentPage)
+        public async Task<(List<UserHospital>, int)> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             var dbConnection = await GetDbConnectionAsync();
@@ -33,17 +33,24 @@ namespace Refined.EasyHospital.UserHospitals
             parameters.Add("offset", (currentPage - 1) * pageSize);
 
             // Compose sql command
-            var sqlCommand = @"
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppUserHospitals
+                ";
+
+            var dataSqlCommand = @"
                 SELECT Id, UserId, HospitalId 
                 FROM AppUserHospitals
                 LIMIT @pageSize OFFSET @offset
                 ";
 
             // Get data
-            var userHospitals = await dbConnection.QueryAsync<UserHospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            var userHospitals = await dbConnection.QueryAsync<UserHospital>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
             // Return result
-            return userHospitals.ToList();
+            return (userHospitals.ToList(), totalCountWithSearch);
         }
 
         public async Task<UserHospital> GetAsync(Guid id)

@@ -34,11 +34,9 @@ namespace Refined.EasyHospital.Communes
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var communes = await communeDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            var (communes, totalCount) = await communeDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var communeDtos = await MapToGetListOutputDtosAsync(communes);
-
-            var totalCount = communeDtos.Count;
 
             return new PagedResultDto<CommuneDto>(
                 totalCount,

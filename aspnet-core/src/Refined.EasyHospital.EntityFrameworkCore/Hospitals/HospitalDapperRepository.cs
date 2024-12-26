@@ -21,7 +21,7 @@ namespace Refined.EasyHospital.Hospitals
         IScopedDependency,
         IHospitalDapperRepository
     {
-        public async Task<List<Hospital>> GetManyAsync(string? search, int pageSize, int currentPage)
+        public async Task<(List<Hospital>, int)> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             var dbConnection = await GetDbConnectionAsync();
@@ -33,7 +33,13 @@ namespace Refined.EasyHospital.Hospitals
             parameters.Add("offset", (currentPage - 1) * pageSize);
 
             // Compose sql command
-            var sqlCommand = @"
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppHospitals
+                WHERE (@search IS NULL OR Name LIKE @search OR Address LIKE @search)
+                ";
+
+            var dataSqlCommand = @"
                 SELECT Id, Name, Address, ProvinceCode, DistrictCode, CommuneCode 
                 FROM AppHospitals
                 WHERE (@search IS NULL OR Name LIKE @search OR Address LIKE @search)
@@ -42,13 +48,15 @@ namespace Refined.EasyHospital.Hospitals
                 ";
 
             // Get data
-            var hospitals = await dbConnection.QueryAsync<Hospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            var hospitals = await dbConnection.QueryAsync<Hospital>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
             // Return result
-            return hospitals.ToList();
+            return (hospitals.ToList(), totalCountWithSearch);
         }
 
-        public async Task<List<Hospital>> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode)
+        public async Task<(List<Hospital>, int)> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode)
         {
             // Get connection
             var dbConnection = await GetDbConnectionAsync();
@@ -63,7 +71,17 @@ namespace Refined.EasyHospital.Hospitals
             parameters.Add("offset", (currentPage - 1) * pageSize);
 
             // Compose sql command
-            var sqlCommand = @"
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppHospitals
+                WHERE 
+                    (@search IS NULL OR Name LIKE @search OR Address LIKE @search)
+                    AND (@provinceCode IS NULL OR ProvinceCode = @provinceCode)
+                    AND (@districtCode IS NULL OR DistrictCode = @districtCode)
+                    AND (@communeCode IS NULL OR CommuneCode = @communeCode)
+                ";
+
+            var dataSqlCommand = @"
                 SELECT Id, Name, Address, ProvinceCode, DistrictCode, CommuneCode 
                 FROM AppHospitals
                 WHERE 
@@ -76,10 +94,12 @@ namespace Refined.EasyHospital.Hospitals
                 ";
 
             // Get data
-            var hospitals = await dbConnection.QueryAsync<Hospital>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            var hospitals = await dbConnection.QueryAsync<Hospital>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
             // Return result
-            return hospitals.ToList();
+            return (hospitals.ToList(), totalCountWithSearch);
         }
 
         public async Task<Hospital> GetAsync(Guid id)

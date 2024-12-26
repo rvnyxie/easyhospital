@@ -12,7 +12,7 @@ namespace Refined.EasyHospital.Base
         /// Async get many entities
         /// </summary>
         /// <returns></returns>
-        Task<List<TEntity>> GetManyAsync(string? search, int pageSize, int currentPage);
+        Task<(List<TEntity>, int)> GetManyAsync(string? search, int pageSize, int currentPage);
 
         /// <summary>
         /// Async get entity by ID

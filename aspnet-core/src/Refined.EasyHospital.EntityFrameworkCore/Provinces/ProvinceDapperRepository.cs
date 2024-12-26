@@ -19,7 +19,7 @@ namespace Refined.EasyHospital.Provinces
         ITransientDependency,
         IProvinceDapperRepository
     {
-        public async Task<List<Province>> GetManyAsync(string? search, int pageSize, int currentPage)
+        public async Task<(List<Province>, int)> GetManyAsync(string? search, int pageSize, int currentPage)
         {
             // Get connection
             var dbConnection = await GetDbConnectionAsync();
@@ -31,7 +31,13 @@ namespace Refined.EasyHospital.Provinces
             parameters.Add("offset", (currentPage - 1) * pageSize);
 
             // Compose sql command
-            var sqlCommand = @"
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppProvinces
+                WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                ";
+
+            var dataSqlCommand = @"
                 SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
                 FROM AppProvinces
                 WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
@@ -40,10 +46,11 @@ namespace Refined.EasyHospital.Provinces
                 ";
 
             // Get data
-            var provinces = await dbConnection.QueryAsync<Province>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var provinces = await dbConnection.QueryAsync<Province>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
 
             // Return result
-            return provinces.ToList();
+            return (provinces.ToList(), totalCountWithSearch);
         }
 
         public async Task<Province> GetAsync(Guid id)

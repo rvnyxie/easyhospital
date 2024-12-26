@@ -35,11 +35,9 @@ namespace Refined.EasyHospital.Patients
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var patients = await patientDapperRepository.GetManyPatientsWithPaginationAndSearch(search, pageSize, currentPage, provinceCode, districtCode, communeCode, hospitalId);
+            var (patients, totalCount) = await patientDapperRepository.GetManyPatientsWithPaginationAndSearch(search, pageSize, currentPage, provinceCode, districtCode, communeCode, hospitalId);
 
             var patientDtos = await MapToGetListOutputDtosAsync(patients);
-
-            var totalCount = patientDtos.Count;
 
             return new PagedResultDto<PatientDto>(
                 totalCount,

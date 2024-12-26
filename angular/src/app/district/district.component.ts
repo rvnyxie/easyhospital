@@ -14,10 +14,11 @@ export class DistrictComponent implements OnInit {
   district = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
   query = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 20,
     sorting: '',
     search: '',
-  } as LocalityPagedAndSortedResultRequestDto;
+    pageIndex: 1,
+  };
 
   // Modal
   isModalOpen = false;
@@ -40,7 +41,7 @@ export class DistrictComponent implements OnInit {
   }
 
   ngOnInit() {
-    const districtStreamCreator = (query: LocalityPagedAndSortedResultRequestDto) => this.districtService.getList(query);
+    const districtStreamCreator = () => this.districtService.getList(this.query);
 
     this.list.hookToQuery(districtStreamCreator).subscribe((response) => {
       this.district = response;
@@ -48,7 +49,16 @@ export class DistrictComponent implements OnInit {
     });
   }
 
-  onQueryParamsChange(params: { pageIndex: number; pageSize: number; sort: { key: string; value: string }[] }) {
+  onPageIndexChange(pageIndex: number) {
+    this.query.pageIndex = pageIndex;
+    this.query.skipCount = (pageIndex - 1) * this.query.maxResultCount;
+
+    this.list.get();
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.query.maxResultCount = pageSize;
+
     this.list.get();
   }
 

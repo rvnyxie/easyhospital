@@ -32,9 +32,7 @@ namespace Refined.EasyHospital.Provinces
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var provinces = await provinceDapperRepository.GetManyAsync(search, pageSize, currentPage);
-
-            var totalCount = provinces.Count();
+            var (provinces, totalCount) = await provinceDapperRepository.GetManyAsync(search, pageSize, currentPage);
 
             var provinceDtos = await MapToGetListOutputDtosAsync(provinces);
 
