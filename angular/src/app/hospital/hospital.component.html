@@ -11,13 +11,13 @@
       <!-- Province Select -->
       <nz-select
         nzMode='default'
-        nzSize='large'
         nzPlaceHolder='Select province'
         nzAllowClear
         nzShowSearch
         nzServerSearch
         [(ngModel)]='query.provinceCode'
         (nzOnSearch)='onProvinceSearch($event)'
+        (ngModelChange)='onProvinceChange($event)'
       >
         <nz-option *ngFor='let province of provinces.items' [nzValue]='province.code' [nzLabel]='province.name'
         >
@@ -27,7 +27,6 @@
       <!-- District Select -->
       <nz-select
         nzMode='default'
-        nzSize='large'
         nzPlaceHolder='Select district'
         nzAllowClear
         nzShowSearch
@@ -42,7 +41,7 @@
 
       <!-- Commune Select -->
       <nz-select
-        nzSize='large'
+        nzMode='default'
         nzPlaceHolder="Select commune"
         nzAllowClear
         nzShowSearch
@@ -59,7 +58,6 @@
     <!-- Hospital Code/Name Search -->
     <input
       nz-input
-      nzSize='large'
       placeholder='Search hospital by code or name'
       [(ngModel)]='query.search'
     />

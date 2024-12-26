@@ -38,6 +38,7 @@ export class HospitalComponent implements OnInit {
     maxResultCount: 100,
     sorting: '',
     search: null,
+    provinceCode: null,
   }
 
   communeQuery: LocalityPagedAndSortedResultRequestDto = {
@@ -45,6 +46,7 @@ export class HospitalComponent implements OnInit {
     maxResultCount: 100,
     sorting: '',
     search: null,
+    districtCode: null,
   }
 
   provinces = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
@@ -76,92 +78,99 @@ export class HospitalComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Define stream creators
+    // Define stream creator
     const hospitalStreamCreator = () => this.hospitalService.getList(this.query);
-    const provinceStreamCreator = () => this.provinceService.getList(this.provinceQuery);
-    const districtStreamCreator = () => this.districtService.getList(this.districtQuery);
-    const communeStreamCreator = () => this.communeService.getList(this.communeQuery);
 
-    // Hook stream creators to list service
+    // Hook hospital stream creators to list service
     this.list.hookToQuery(hospitalStreamCreator).subscribe((response) => {
       this.hospital = response;
       console.log(this.hospital);
     });
 
-    this.list.hookToQuery(provinceStreamCreator).subscribe((response) => {
-      this.provinces = response;
-      console.log(this.provinces);
-    })
-
-    this.list.hookToQuery(districtStreamCreator).subscribe((response) => {
-      this.districts = response;
-      console.log(this.districts);
-    })
-
-    this.list.hookToQuery(communeStreamCreator).subscribe((response) => {
-      this.communes = response;
-      console.log(this.communes);
-    })
-
-    // Load provinces when on init
+    // Load initial provinces
     this.loadProvinces();
   }
 
-  loadProvinces(search?: string) {
-    this.provinceQuery.search = search;
-    // TODO: load provinces
+  // Province-related methods
+
+  loadProvinces() {
+    this.provinceService.getList(this.provinceQuery).subscribe((response) => {
+      this.provinces = response;
+      console.log('Provinces:', this.provinces);
+
+      // Reset dependent queries
+      this.query.districtCode = null;
+      this.query.communeCode = null;
+
+      this.districts.totalCount = 0;
+      this.districts.items = [];
+
+      this.communes.totalCount = 0;
+      this.communes.items = [];
+    });
   }
 
   onProvinceSearch(search: string) {
-    this.loadProvinces(search);
+    this.provinceQuery.search = search;
+    this.loadProvinces();
   }
 
   onProvinceChange(provinceCode: string) {
-    this.query.districtCode = null;
-    this.query.communeCode = null;
-
-    this.districts.totalCount = 0;
-    this.districts.items = [];
-
-    this.communes.totalCount = 0;
-    this.communes.items = [];
-
     if (provinceCode) {
-      this.loadDistricts(provinceCode);
+      // Select province will need to update the queries
+      this.query.provinceCode = provinceCode;
+      this.districtQuery.provinceCode = provinceCode;
+
+      this.loadDistricts();
     }
   }
 
   // District-related methods
 
-  loadDistricts(provinceCode: string, search?: string) {
+  loadDistricts() {
+    if (!this.districtQuery.provinceCode) return;
+
+    this.districtService.getList(this.districtQuery).subscribe((response) => {
+      this.districts = response;
+      console.log('Districts:', this.districts);
+
+      // Reset dependent query
+      this.query.communeCode = null;
+
+      this.communes.totalCount = 0;
+      this.communes.items = [];
+    });
   }
 
   onDistrictSearch(search: string) {
-    if (this.query.provinceCode) {
-      this.loadDistricts(this.query.provinceCode, search);
-    }
+    this.districtQuery.search = search;
+    this.loadDistricts();
   }
 
   onDistrictChange(districtCode: string) {
-    this.query.communeCode = null;
-
-    this.communes.totalCount = 0;
-    this.communes.items = [];
-
     if (districtCode) {
-      this.loadCommunes(districtCode);
+      // Select district will need to update the queries
+      this.query.districtCode = districtCode;
+      this.communeQuery.districtCode = districtCode;
+
+      this.loadCommunes();
     }
   }
 
   // Commune-related methods
 
-  loadCommunes(districtCode: string, search?: string) {
+  loadCommunes() {
+    if (!this.communeQuery.communeCode) return;
+
+    this.communeService.getList(this.communeQuery).subscribe((response) => {
+      this.communes = response;
+      console.log('Communes:', this.communes);
+    });
   }
 
   onCommuneSearch(search: string) {
-    if (this.query.districtCode) {
-      this.loadCommunes(this.query.districtCode, search);
-    }
+    this.communeQuery.search = search;
+    this.loadCommunes();
   }
 
   onCommuneChange(communeCode: string) {
@@ -184,12 +193,16 @@ export class HospitalComponent implements OnInit {
     this.query.districtCode = null;
     this.query.communeCode = null;
 
-    // TODO:
+    this.districtQuery.districtCode = null;
+    this.communeQuery.districtCode = null;
+
+    this.loadProvinces();
+    this.list.get();
   }
 
   performSearch() {
-    console.log(this.query);
-    // TODO:
+    console.log("Search query:", this.query);
+    this.list.get();
   }
 
   onPageSizeChange(pageSize: number) {
