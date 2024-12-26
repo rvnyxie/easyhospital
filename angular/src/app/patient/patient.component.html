@@ -5,6 +5,69 @@
     <button nz-button nzType='primary' (click)='openModal("create")'>Add</button>
   </div>
 
+  <!-- Search Form -->
+  <div class='search-group'>
+    <div class='select-group'>
+      <!-- Province Select -->
+      <nz-select
+        nzMode='default'
+        nzPlaceHolder='Select province'
+        nzAllowClear
+        nzShowSearch
+        nzServerSearch
+        [(ngModel)]='query.provinceCode'
+        (nzOnSearch)='onProvinceSearch($event)'
+        (ngModelChange)='onProvinceChange($event)'
+      >
+        <nz-option *ngFor='let province of provinces.items' [nzValue]='province.code' [nzLabel]='province.name'
+        >
+        </nz-option>
+      </nz-select>
+
+      <!-- District Select -->
+      <nz-select
+        nzMode='default'
+        nzPlaceHolder='Select district'
+        nzAllowClear
+        nzShowSearch
+        [nzDisabled]='!query.provinceCode'
+        [(ngModel)]='query.districtCode'
+        (nzOnSearch)='onDistrictSearch($event)'
+        (ngModelChange)='onDistrictChange($event)'
+      >
+        <nz-option *ngFor='let district of districts.items' [nzValue]='district.code' [nzLabel]='district.name'
+        ></nz-option>
+      </nz-select>
+
+      <!-- Commune Select -->
+      <nz-select
+        nzMode='default'
+        nzPlaceHolder="Select commune"
+        nzAllowClear
+        nzShowSearch
+        [nzDisabled]="!query.districtCode"
+        [(ngModel)]="query.communeCode"
+        (nzOnSearch)="onCommuneSearch($event)"
+        (ngModelChange)='onCommuneChange($event)'
+      >
+        <nz-option *ngFor="let commune of communes.items" [nzValue]="commune.code" [nzLabel]="commune.name">
+        </nz-option>
+      </nz-select>
+    </div>
+
+    <!-- General Search -->
+    <input
+      nz-input
+      placeholder='Search patient by code or name'
+      [(ngModel)]='query.search'
+    />
+
+    <div class='button-group'>
+      <button nz-button nzType='default' (click)='resetSearch()'>Reset</button>
+      <button nz-button nzType='primary' (click)='performSearch()'>Search</button>
+    </div>
+  </div>
+
   <!-- Table -->
   <nz-table
     #patientTable

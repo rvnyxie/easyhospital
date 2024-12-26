@@ -32,7 +32,7 @@ export class HospitalComponent implements OnInit {
 
   // Queries
   query = { ...this.defaultHospitalQuery };
-  provinceQuery = { ...this.defaultLocalityQuery };
+  provinceQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
   districtQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
   communeQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
 

@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PatientDto, PatientService } from '@proxy/patients';
+import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
+import { ProvinceDto, ProvinceService } from '@proxy/provinces';
+import { DistrictDto, DistrictService } from '@proxy/districts';
+import { CommuneDto, CommuneService } from '@proxy/communes';
 
 @Component({
   selector: 'app-patient',
@@ -10,14 +14,31 @@ import { PatientDto, PatientService } from '@proxy/patients';
   providers: [ListService],
 })
 export class PatientComponent implements OnInit {
-  patient = { totalCount: 0, items: [] } as PagedResultDto<PatientDto>;
-  query = {
+  // Default queries
+  readonly defaultLocalityQuery: LocalityPagedAndSortedResultRequestDto = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 100,
     sorting: '',
-    search: '',
+    search: null,
+    provinceCode: null,
+    districtCode: null,
+    communeCode: null,
+  }
+  readonly defaultPatientQuery = {
+    ...this.defaultLocalityQuery,
     pageIndex: 1,
+    maxResultCount: 10
   };
+
+  query = { ...this.defaultPatientQuery };
+  provinceQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  districtQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  communeQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+
+  patient = { totalCount: 0, items: [] } as PagedResultDto<PatientDto>;
+  provinces = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
+  districts = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
+  communes = { totalCount : 0, items: [] } as PagedResultDto<CommuneDto>;
 
   // Modal
   isModalOpen = false;
@@ -29,6 +50,9 @@ export class PatientComponent implements OnInit {
 
   constructor(public list: ListService,
               private patientService: PatientService,
+              private provinceService: ProvinceService,
+              private districtService: DistrictService,
+              private communeService: CommuneService,
               private fb: FormBuilder) {
     this.patientForm = this.fb.group({
       id: [''],
@@ -48,6 +72,113 @@ export class PatientComponent implements OnInit {
       this.patient = response;
       console.log(this.patient);
     });
+
+    // Load initial provinces
+    this.loadProvinces();
+  }
+
+  // Province-related methods
+
+  loadProvinces() {
+    this.provinceService.getList(this.provinceQuery).subscribe((response) => {
+      this.provinces = response;
+      console.log('Provinces:', this.provinces);
+
+      // Reset dependent queries
+      this.query.districtCode = null;
+      this.query.communeCode = null;
+
+      this.districts.totalCount = 0;
+      this.districts.items = [];
+
+      this.communes.totalCount = 0;
+      this.communes.items = [];
+    });
+  }
+
+  onProvinceSearch(search: string) {
+    this.provinceQuery.search = search;
+    this.loadProvinces();
+  }
+
+  onProvinceChange(provinceCode: string) {
+    if (provinceCode) {
+      // Select province will need to update the queries
+      this.query.provinceCode = provinceCode;
+      this.districtQuery.provinceCode = provinceCode;
+
+      this.loadDistricts();
+    }
+  }
+
+  // District-related methods
+
+  loadDistricts() {
+    if (!this.districtQuery.provinceCode) return;
+
+    this.districtService.getList(this.districtQuery).subscribe((response) => {
+      this.districts = response;
+      console.log('Districts:', this.districts);
+
+      // Reset dependent query
+      this.query.communeCode = null;
+
+      this.communes.totalCount = 0;
+      this.communes.items = [];
+    });
+  }
+
+  onDistrictSearch(search: string) {
+    this.districtQuery.search = search;
+    this.loadDistricts();
+  }
+
+  onDistrictChange(districtCode: string) {
+    if (districtCode) {
+      // Select district will need to update the queries
+      this.query.districtCode = districtCode;
+      this.communeQuery.districtCode = districtCode;
+
+      this.loadCommunes();
+    }
+  }
+
+  // Commune-related methods
+
+  loadCommunes() {
+    if (!this.communeQuery.districtCode) return;
+
+    this.communeService.getList(this.communeQuery).subscribe((response) => {
+      this.communes = response;
+      console.log('Communes:', this.communes);
+    });
+  }
+
+  onCommuneSearch(search: string) {
+    this.communeQuery.search = search;
+    this.loadCommunes();
+  }
+
+  onCommuneChange(communeCode: string) {
+    if (communeCode) {
+      this.query.communeCode = communeCode
+    }
+  }
+
+  // Search form methods
+  resetSearch() {
+    this.query = { ...this.defaultPatientQuery };
+    this.provinceQuery = { ...this.defaultLocalityQuery };
+    this.districtQuery = { ...this.defaultLocalityQuery };
+    this.communeQuery = { ...this.defaultLocalityQuery };
+
+    this.loadProvinces();
+    this.list.get();
+  }
+
+  performSearch() {
+    console.log("Search query:", this.query);
+    this.list.get();
   }
 
   onPageIndexChange(pageIndex: number) {
