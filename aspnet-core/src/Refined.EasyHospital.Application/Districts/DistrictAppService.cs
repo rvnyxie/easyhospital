@@ -27,10 +27,21 @@ namespace Refined.EasyHospital.Districts
         {
             // Extract pagination and filter parameters
             var search = input.Search;
+            var provinceCode = input.ProvinceCode;
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var (districts, totalCount) = await districtDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            var districts = new List<District>();
+            var totalCount = 0;
+
+            if (provinceCode == null)
+            {
+                (districts, totalCount) = await districtDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            }
+            else
+            {
+                (districts, totalCount) = await districtDapperRepository.GetManyByProvinceCodeAsync(search, provinceCode, pageSize, currentPage);
+            }
 
             var districtDtos = await MapToGetListOutputDtosAsync(districts);
 

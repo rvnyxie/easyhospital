@@ -128,6 +128,7 @@ public class EasyHospitalDbContext :
             b.Property(p => p.Population);
             b.Property(p => p.Area);
             b.Property(p => p.Description).HasMaxLength(512);
+            b.Property(p => p.ProvinceCode).HasMaxLength(50);
 
             b.HasIndex(p => p.Code).IsUnique();
         });
@@ -146,6 +147,7 @@ public class EasyHospitalDbContext :
             b.Property(p => p.Population);
             b.Property(p => p.Area);
             b.Property(p => p.Description).HasMaxLength(512);
+            b.Property(p => p.DistrictCode).HasMaxLength(50);
 
             b.HasIndex(p => p.Code).IsUnique();
         });
@@ -158,9 +160,9 @@ public class EasyHospitalDbContext :
 
             // Property constraints
             b.Property(p => p.Name).IsRequired().HasMaxLength(100);
-            b.Property(p => p.ProvinceCode).IsRequired();
-            b.Property(p => p.DistrictCode).IsRequired();
-            b.Property(p => p.CommuneCode).IsRequired();
+            b.Property(p => p.ProvinceCode).IsRequired().HasMaxLength(50);
+            b.Property(p => p.DistrictCode).IsRequired().HasMaxLength(50);
+            b.Property(p => p.CommuneCode).IsRequired().HasMaxLength(50);
 
             b.HasIndex(p => new { p.ProvinceCode, p.DistrictCode, p.CommuneCode });
         });
@@ -183,11 +185,11 @@ public class EasyHospitalDbContext :
             b.ConfigureByConvention();
 
             // Property constraints
-            b.Property(p => p.Code).IsRequired();
+            b.Property(p => p.Code).IsRequired().HasMaxLength(50);
             b.Property(p => p.Name).IsRequired().HasMaxLength(100);
-            b.Property(p => p.ProvinceCode).IsRequired();
-            b.Property(p => p.DistrictCode).IsRequired();
-            b.Property(p => p.CommuneCode).IsRequired();
+            b.Property(p => p.ProvinceCode).IsRequired().HasMaxLength(50);
+            b.Property(p => p.DistrictCode).IsRequired().HasMaxLength(50);
+            b.Property(p => p.CommuneCode).IsRequired().HasMaxLength(50);
             b.Property(p => p.HospitalId).IsRequired();
 
             b.HasIndex(p => p.Code).IsUnique();

@@ -39,7 +39,7 @@ namespace Refined.EasyHospital.Districts
                 ";
 
             var dataSqlCommand = @"
-                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode
                 FROM AppDistricts
                 WHERE (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
                 ORDER BY Code ASC
@@ -52,7 +52,45 @@ namespace Refined.EasyHospital.Districts
 
             // Return result
             return (districts.ToList(), totalCountWithSearch);
+        }
 
+        public async Task<(List<District>, int)> GetManyByProvinceCodeAsync(string? search, string? provinceCode, int pageSize, int currentPage)
+        {
+            // Get connection
+            var dbConnection = await GetDbConnectionAsync();
+
+            // Validate sql parameters
+            var parameters = new DynamicParameters();
+            parameters.Add("search", $"%{search}%");
+            parameters.Add("provinceCode", provinceCode);
+            parameters.Add("pageSize", pageSize);
+            parameters.Add("offset", (currentPage - 1) * pageSize);
+
+            // Compose sql command
+            var countSqlCommand = @"
+                SELECT COUNT(*)
+                FROM AppDistricts
+                WHERE 
+                    (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                    AND (ProvinceCode = @provinceCode)
+                ";
+
+            var dataSqlCommand = @"
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode 
+                FROM AppDistricts
+                WHERE 
+                    (@search IS NULL OR Code LIKE @search OR Name LIKE @search)
+                    AND (ProvinceCode = @provinceCode)
+                ORDER BY Code ASC
+                LIMIT @pageSize OFFSET @offset
+                ";
+
+            // Get data
+            var totalCountWithSearch = await dbConnection.QuerySingleAsync<int>(countSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+            var districts = await dbConnection.QueryAsync<District>(dataSqlCommand, parameters, transaction: await GetDbTransactionAsync());
+
+            // Return result
+            return (districts.ToList(), totalCountWithSearch);
         }
 
         public async Task<District> GetAsync(Guid id)
@@ -85,7 +123,7 @@ namespace Refined.EasyHospital.Districts
             parameters.Add("code", code);
 
             // Compose sql command
-            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppDistricts WHERE code = @code";
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode FROM AppDistricts WHERE code = @code";
 
             // Get data
             var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
@@ -104,7 +142,7 @@ namespace Refined.EasyHospital.Districts
             parameters.Add("name", name);
 
             // Compose sql command
-            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area FROM AppDistricts WHERE name = @name";
+            var sqlCommand = "SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode FROM AppDistricts WHERE name = @name";
 
             // Get data
             var district = await dbConnection.QueryFirstOrDefaultAsync<District>(sqlCommand, parameters, transaction: await GetDbTransactionAsync());
@@ -125,7 +163,7 @@ namespace Refined.EasyHospital.Districts
 
             // Compose sql command
             var sqlCommand = @"
-                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area 
+                SELECT Id, Code, Name, EnglishName, DecisionDate, EffectiveDate, Description, Level, Population, Area, ProvinceCode
                 FROM AppDistricts
                 WHERE (Code in @codes OR Name in @names)
                 ORDER BY Code ASC

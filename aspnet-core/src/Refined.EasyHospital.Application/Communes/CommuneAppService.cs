@@ -31,10 +31,21 @@ namespace Refined.EasyHospital.Communes
         {
             // Extract pagination and filter parameters
             var search = input.Search;
+            var districtCode = input.DistrictCode;
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var (communes, totalCount) = await communeDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            var communes = new List<Commune>();
+            var totalCount = 0;
+
+            if (districtCode == null)
+            {
+                (communes, totalCount) = await communeDapperRepository.GetManyAsync(search, pageSize, currentPage);
+            }
+            else
+            {
+                (communes, totalCount) = await communeDapperRepository.GetManyByDistrictCodeAsync(search, districtCode, pageSize, currentPage);
+            }
 
             var communeDtos = await MapToGetListOutputDtosAsync(communes);
 
