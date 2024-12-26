@@ -17,7 +17,8 @@ export class CommuneComponent implements OnInit {
     maxResultCount: 10,
     sorting: '',
     search: '',
-  } as LocalityPagedAndSortedResultRequestDto;
+    pageIndex: 1,
+  };
 
   // Modal
   isModalOpen = false;
@@ -40,7 +41,7 @@ export class CommuneComponent implements OnInit {
   }
 
   ngOnInit() {
-    const communeStreamCreator = (query: LocalityPagedAndSortedResultRequestDto) => this.communeService.getList(query);
+    const communeStreamCreator = () => this.communeService.getList(this.query);
 
     this.list.hookToQuery(communeStreamCreator).subscribe((response) => {
       this.commune = response;
@@ -48,7 +49,16 @@ export class CommuneComponent implements OnInit {
     });
   }
 
-  onQueryParamsChange(params: { pageIndex: number; pageSize: number; sort: { key: string; value: string }[] }) {
+  onPageIndexChange(pageIndex: number) {
+    this.query.pageIndex = pageIndex;
+    this.query.skipCount = (pageIndex - 1) * this.query.maxResultCount;
+
+    this.list.get();
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.query.maxResultCount = pageSize;
+
     this.list.get();
   }
 

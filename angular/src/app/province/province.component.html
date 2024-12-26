@@ -10,13 +10,10 @@
     #provinceTable
     [nzData]='province.items'
     [nzBordered]='true'
-    [nzSize]='"middle"'
-    [nzShowPagination]='true'
-    [nzPaginationPosition]='"bottom"'
-    [nzTotal]='province.totalCount'
     [nzPageSize]='query.maxResultCount'
+    [nzShowPagination]='false'
+    [nzSize]='"middle"'
     [nzScroll]='{ x: "1000px" }'
-    (nzQueryParams)='onQueryParamsChange($event)'
   >
     <thead>
       <tr>
@@ -35,7 +32,7 @@
     </thead>
     <tbody>
       <tr *ngFor='let province of provinceTable.data; let idx = index'>
-        <td>{{ idx + 1 }}</td>
+        <td>{{ query.skipCount + 1 + idx }}</td>
         <td>{{ province.code }}</td>
         <td>{{ province.name }}</td>
         <td>{{ province.englishName }}</td>
@@ -69,6 +66,23 @@
       </tr>
     </tbody>
   </nz-table>
+
+  <!-- Pagination -->
+  <div class='navigation'>
+    <nz-pagination
+      [(nzPageIndex)]="query.pageIndex"
+      [nzTotal]="province.totalCount"
+      [(nzPageSize)]="query.maxResultCount"
+      [nzShowTotal]="rangeTemplate"
+      nzShowSizeChanger
+      nzShowQuickJumper
+      (nzPageIndexChange)='onPageIndexChange($event)'
+      (nzPageSizeChange)='onPageSizeChange($event)'
+    ></nz-pagination>
+    <ng-template #rangeTemplate let-range="range" let-total>
+      {{ range[0] }}-{{ range[1] }} of {{ total }} items
+    </ng-template>
+  </div>
 
   <!-- Modal -->
   <nz-modal

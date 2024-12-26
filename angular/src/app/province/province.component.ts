@@ -14,10 +14,11 @@ export class ProvinceComponent implements OnInit {
   province = { totalCount: 0, items: [] } as PagedResultDto<ProvinceDto>;
   query = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 20,
     sorting: '',
     search: '',
-  } as LocalityPagedAndSortedResultRequestDto;
+    pageIndex: 1,
+  };
 
   // Modal
   isModalOpen = false;
@@ -40,7 +41,7 @@ export class ProvinceComponent implements OnInit {
   }
 
   ngOnInit() {
-    const provinceStreamCreator = (query: LocalityPagedAndSortedResultRequestDto) => this.provinceService.getList(query);
+    const provinceStreamCreator = () => this.provinceService.getList(this.query);
 
     this.list.hookToQuery(provinceStreamCreator).subscribe((response) => {
       this.province = response;
@@ -48,7 +49,16 @@ export class ProvinceComponent implements OnInit {
     });
   }
 
-  onQueryParamsChange(params: { pageIndex: number; pageSize: number; sort: { key: string; value: string }[] }) {
+  onPageIndexChange(pageIndex: number) {
+    this.query.pageIndex = pageIndex;
+    this.query.skipCount = (pageIndex - 1) * this.query.maxResultCount;
+
+    this.list.get();
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.query.maxResultCount = pageSize;
+
     this.list.get();
   }
 

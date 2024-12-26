@@ -8,6 +8,7 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzTableComponent, NzTableModule, NzThAddOnComponent, NzThMeasureDirective } from 'ng-zorro-antd/table';
 import { SharedModule } from '../shared/shared.module';
+import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { SharedModule } from '../shared/shared.module';
     NzModalModule,
     NzModalContentDirective,
     NzFormModule,
-    NzInputDirective
+    NzInputDirective,
+    NzPaginationComponent
   ]
 })
 export class CommuneModule { }

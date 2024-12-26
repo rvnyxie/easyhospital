@@ -14,7 +14,7 @@ export class DistrictComponent implements OnInit {
   district = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
   query = {
     skipCount: 0,
-    maxResultCount: 20,
+    maxResultCount: 10,
     sorting: '',
     search: '',
     pageIndex: 1,
