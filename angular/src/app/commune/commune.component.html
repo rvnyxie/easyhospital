@@ -1,1 +1,119 @@
-<p>commune works!</p>
+<div>
+  <!-- Heading -->
+  <div class='custom-heading'>
+    <h1>District</h1>
+    <button nz-button nzType='primary' (click)='openModal("create")'>Add</button>
+  </div>
+
+  <!-- Table -->
+  <nz-table
+    #communeTable
+    [nzData]='commune.items'
+    [nzBordered]='true'
+    [nzSize]='"middle"'
+    [nzShowPagination]='true'
+    [nzPaginationPosition]='"bottom"'
+    [nzTotal]='commune.totalCount'
+    [nzPageSize]='query.maxResultCount'
+    [nzScroll]='{ x: "1000px" }'
+    (nzQueryParams)='onQueryParamsChange($event)'
+  >
+    <thead>
+    <tr>
+      <th nzWidth="50px">STT</th>
+      <th nzShowSort nzWidth="100px">Code</th>
+      <th nzShowSort nzWidth="150px">Name</th>
+      <th nzWidth="200px">English Name</th>
+      <th nzShowSort nzWidth="100px">Level</th>
+      <th nzWidth="150px">Decision Date</th>
+      <th nzWidth="150px">Effective Date</th>
+      <th nzWidth="100px">Population</th>
+      <th nzWidth="100px">Area</th>
+      <th nzWidth="200px">Description</th>
+      <th nzWidth="100px">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor='let commune of communeTable.data; let idx = index'>
+      <td>{{ idx + 1 }}</td>
+      <td>{{ commune.code }}</td>
+      <td>{{ commune.name }}</td>
+      <td>{{ commune.englishName }}</td>
+      <td>{{ commune.level }}</td>
+      <td>{{ commune.decisionDate }}</td>
+      <td>{{ commune.effectiveDate }}</td>
+      <td>{{ commune.population }}</td>
+      <td>{{ commune.area }}</td>
+      <td>{{ commune.description }}</td>
+      <td class='table-actions'>
+        <button
+          nz-button
+          nzType="default"
+          nzSize="small"
+          class="action-button"
+          (click)="openModal('update', commune)"
+        >
+          <i class="fa fa-edit"></i> Edit
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          nzDanger
+          nzSize="small"
+          class="action-button"
+          (click)="openModal('delete', commune)"
+        >
+          <i class="fa fa-trash"></i> Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+
+  <!-- Modal -->
+  <nz-modal
+    [(nzVisible)]="isModalOpen"
+    [nzTitle]="modalTitle"
+    [nzCentered]="true"
+    (nzOnCancel)="handleModalCancel()"
+    (nzOnOk)="handleModalConfirm()"
+  >
+    <ng-container *nzModalContent>
+      <!-- Create/Update Form -->
+      <form
+        *ngIf="isFormMode"
+        [formGroup]="communeForm"
+        nzLayout="vertical"
+        (ngSubmit)="handleModalConfirm()" nz-form
+      >
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="code">Province Code</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="code" name="code" type="text" id="code" placeholder="Enter code" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="name">Province Name</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="name" name="name" type="text" id="name" placeholder="Enter name"  />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="englishName">English Name</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="englishName" name="englishName" type="text" id="englishName" placeholder="Enter English name" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="null" nzFor="level">Level</nz-form-label>
+          <nz-form-control [nzSpan]="null">
+            <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+
+      <!-- Delete Confirmation -->
+      <p *ngIf="!isFormMode">{{ deleteMessage }}</p>
+    </ng-container>
+  </nz-modal>
+</div>

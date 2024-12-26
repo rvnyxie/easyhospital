@@ -1,8 +1,13 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { CommuneRoutingModule } from './commune-routing.module';
 import { CommuneComponent } from './commune.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputDirective } from 'ng-zorro-antd/input';
+import { NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTableComponent, NzTableModule, NzThAddOnComponent, NzThMeasureDirective } from 'ng-zorro-antd/table';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -10,8 +15,17 @@ import { CommuneComponent } from './commune.component';
     CommuneComponent
   ],
   imports: [
-    CommonModule,
-    CommuneRoutingModule
+    SharedModule,
+    CommuneRoutingModule,
+    NzTableComponent,
+    NzTableModule,
+    NzThMeasureDirective,
+    NzThAddOnComponent,
+    NzButtonModule,
+    NzModalModule,
+    NzModalContentDirective,
+    NzFormModule,
+    NzInputDirective
   ]
 })
 export class CommuneModule { }
