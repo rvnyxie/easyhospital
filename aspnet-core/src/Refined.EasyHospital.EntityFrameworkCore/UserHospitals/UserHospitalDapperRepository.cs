@@ -39,7 +39,7 @@ namespace Refined.EasyHospital.UserHospitals
                 ";
 
             var dataSqlCommand = @"
-                SELECT uh.Id, uh.UserId, u.Name As UserName, HospitalId, h.Name as HospitalName
+                SELECT Id, UserId, HospitalId
                 FROM AppUserHospitals
                 LIMIT @pageSize OFFSET @offset
                 ";
@@ -74,7 +74,7 @@ namespace Refined.EasyHospital.UserHospitals
                 ";
 
             var dataSqlCommand = @"
-                SELECT uh.Id, uh.UserId, u.Name As UserName, HospitalId, h.Name as HospitalName
+                SELECT uh.Id, uh.UserId, u.UserName As UserName, HospitalId, h.Name as HospitalName
                 FROM AppUserHospitals uh
                 INNER JOIN AbpUsers u ON uh.UserId = u.Id
                 INNER JOIN AppHospitals h ON uh.HospitalId = h.Id

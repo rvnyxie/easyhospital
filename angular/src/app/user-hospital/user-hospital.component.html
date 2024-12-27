@@ -18,8 +18,8 @@
     <thead>
     <tr>
       <th nzWidth="50px">STT</th>
-      <th nzWidth="250px">User ID</th>
-      <th nzWidth="250px">Hospital ID</th>
+      <th nzWidth="250px">User</th>
+      <th nzWidth="250px">Hospital</th>
       <th nzWidth="180px">Actions</th>
     </tr>
     </thead>
@@ -88,15 +88,34 @@
         (ngSubmit)="handleModalConfirm()" nz-form
       >
         <nz-form-item>
-          <nz-form-label nzFor="userId" nzRequired>User ID</nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="Please select user">
-            <input nz-input formControlName="userId" name="userId" type="text" id="userId" placeholder="Enter user ID" />
+          <nz-form-label nzFor='user' nzRequired>User</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select user'>
+            <nz-select
+              nzPlaceHolder='Select User'
+              formControlName='userId'
+              [nzDisabled]='modalMode === "update"'
+            >
+              <nz-option
+                *ngFor='let user of userResults.items'
+                [nzLabel]='user.userName'
+                [nzValue]='user.id'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label nzFor="hospitalId" nzRequired>Hospital ID</nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="Please select hospital">
-            <input nz-input formControlName="hospitalId" name="hospitalId" type="text" id="hospitalId" placeholder="Enter hospital ID" />
+          <nz-form-label nzFor='hospital' nzRequired>Hospital</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select hospital'>
+            <nz-select
+              nzPlaceHolder='Select Hospital'
+              formControlName='hospitalId'
+            >
+              <nz-option
+                *ngFor='let hospital of hospitalResults.items'
+                [nzLabel]='hospital.name'
+                [nzValue]='hospital.id'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </form>

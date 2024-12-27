@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserHospitalDto, UserHospitalService } from '@proxy/user-hospitals';
+import { GetIdentityUsersInput, IdentityUserDto, IdentityUserService } from '@abp/ng.identity/proxy';
+import { HospitalDto, HospitalPagedAndSortedResultRequestDto, HospitalService } from '@proxy/hospitals';
 
 @Component({
   selector: 'app-user-hospital',
@@ -19,6 +21,21 @@ export class UserHospitalComponent implements OnInit {
     pageIndex: 1,
   };
 
+  getUserQuery: GetIdentityUsersInput = {
+    sorting: '',
+    skipCount: 0,
+    maxResultCount: 50,
+    filter: '',
+  }
+  getHospitalQuery: HospitalPagedAndSortedResultRequestDto = {
+    sorting: '',
+    skipCount: 0,
+    maxResultCount: 50,
+    search: null
+  }
+  userResults = { totalCount: 0, items: [] } as PagedResultDto<IdentityUserDto>;
+  hospitalResults = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
+
   // Modal
   isModalOpen = false;
   modalMode: 'create' | 'update' | 'delete' = 'create'; // Current mode
@@ -29,6 +46,8 @@ export class UserHospitalComponent implements OnInit {
 
   constructor(public list: ListService,
               private userHospitalService: UserHospitalService,
+              private hospitalService: HospitalService,
+              private userService: IdentityUserService,
               private fb: FormBuilder) {
     this.userHospitalForm = this.fb.group({
       id: [''],
@@ -97,10 +116,16 @@ export class UserHospitalComponent implements OnInit {
       this.modalTitle = 'Create User-Hospital';
       this.userHospitalForm.reset();
       this.selectedUserHospital = null;
+
+      this.loadUsers();
+      this.loadHospitals();
     } else if (mode === 'update') {
       this.modalTitle = 'Update User-Hospital';
       this.userHospitalForm.patchValue(userHospital); // Populate form with existing data
       this.selectedUserHospital = userHospital;
+
+      this.loadUsers();
+      this.loadHospitals();
     } else if (mode === 'delete') {
       this.modalTitle = 'Delete User-Hospital';
       this.deleteMessage = `Are you sure you want to delete the user-hospital "${userHospital?.id}"?`;
@@ -115,5 +140,19 @@ export class UserHospitalComponent implements OnInit {
 
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
+  }
+
+  loadUsers() {
+    this.userService.getList(this.getUserQuery).subscribe((response) => {
+      this.userResults = response;
+      console.log("Users loaded", this.userResults);
+    })
+  }
+
+  loadHospitals() {
+    this.hospitalService.getList(this.getHospitalQuery).subscribe((response) => {
+      this.hospitalResults = response;
+      console.log("Hospitals loaded", this.hospitalResults);
+    })
   }
 }

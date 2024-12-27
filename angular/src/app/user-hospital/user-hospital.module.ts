@@ -9,6 +9,7 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
 import { NzTableComponent, NzTableModule, NzThAddOnComponent, NzThMeasureDirective } from 'ng-zorro-antd/table';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { NzTableComponent, NzTableModule, NzThAddOnComponent, NzThMeasureDirecti
     NzModalContentDirective,
     NzFormModule,
     NzInputDirective,
-    NzPaginationComponent
+    NzPaginationComponent,
+    NzSelectModule
   ]
 })
 export class UserHospitalModule { }
