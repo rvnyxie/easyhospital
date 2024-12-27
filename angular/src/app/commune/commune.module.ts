@@ -9,6 +9,7 @@ import { NzModalContentDirective, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzTableComponent, NzTableModule, NzThAddOnComponent, NzThMeasureDirective } from 'ng-zorro-antd/table';
 import { SharedModule } from '../shared/shared.module';
 import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
     NzModalContentDirective,
     NzFormModule,
     NzInputDirective,
-    NzPaginationComponent
+    NzPaginationComponent,
+    NzSelectModule
   ]
 })
 export class CommuneModule { }

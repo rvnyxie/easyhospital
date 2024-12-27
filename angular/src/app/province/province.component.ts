@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { ProvinceDto, ProvinceService } from '@proxy/provinces';
-import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
+import { ProvinceDto, ProvinceLevel, ProvinceService } from '@proxy/provinces';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProvinceLevelText } from '../shared/enum-mapping';
+import { getEnumOptions } from '../shared/util';
 
 @Component({
   selector: 'app-province',
@@ -20,6 +21,8 @@ export class ProvinceComponent implements OnInit {
     pageIndex: 1,
   };
 
+  provinceLevels = getEnumOptions(ProvinceLevel);
+
   // Modal
   isModalOpen = false;
   modalMode: 'create' | 'update' | 'delete' = 'create'; // Current mode
@@ -36,7 +39,7 @@ export class ProvinceComponent implements OnInit {
       code: ['', [Validators.required]],
       name: ['', [Validators.required]],
       englishName: [''],
-      level: ['', [Validators.required]]
+      level: [null, [Validators.required]]
     });
   }
 
@@ -120,4 +123,6 @@ export class ProvinceComponent implements OnInit {
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
+
+  protected readonly ProvinceLevelText = ProvinceLevelText;
 }

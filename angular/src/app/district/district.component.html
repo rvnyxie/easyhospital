@@ -18,10 +18,10 @@
     <thead>
     <tr>
       <th nzWidth="50px">STT</th>
-      <th nzShowSort nzWidth="100px">Code</th>
-      <th nzShowSort nzWidth="150px">Name</th>
+      <th nzShowSort nzWidth="70px">Code</th>
+      <th nzShowSort nzWidth="200px">Name</th>
       <th nzWidth="200px">English Name</th>
-      <th nzShowSort nzWidth="100px">Level</th>
+      <th nzShowSort nzWidth="150px">Level</th>
       <th nzWidth="150px">Decision Date</th>
       <th nzWidth="150px">Effective Date</th>
       <th nzWidth="100px">Population</th>
@@ -36,7 +36,7 @@
       <td>{{ district.code }}</td>
       <td>{{ district.name }}</td>
       <td>{{ district.englishName }}</td>
-      <td>{{ district.level }}</td>
+      <td>{{ DistrictLevelText[district.level] }}</td>
       <td>{{ district.decisionDate }}</td>
       <td>{{ district.effectiveDate }}</td>
       <td>{{ district.population }}</td>
@@ -121,7 +121,16 @@
         <nz-form-item>
           <nz-form-label nzFor="level" nzRequired>Level</nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="Please input district level">
-            <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />
+            <nz-select
+              formControlName='level'
+              nzPlaceHolder='Enter level'
+            >
+              <nz-option
+                *ngFor='let level of districtLevels'
+                [nzLabel]='level.label'
+                [nzValue]='level.value'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </form>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommuneDto, CommuneService } from '@proxy/communes';
+import { CommuneDto, CommuneLevel, CommuneService } from '@proxy/communes';
+import { CommuneLevelText } from '../shared/enum-mapping';
+import { getEnumOptions } from '../shared/util';
 
 @Component({
   selector: 'app-commune',
@@ -19,6 +20,8 @@ export class CommuneComponent implements OnInit {
     search: '',
     pageIndex: 1,
   };
+
+  communeLevels = getEnumOptions(CommuneLevel);
 
   // Modal
   isModalOpen = false;
@@ -119,4 +122,6 @@ export class CommuneComponent implements OnInit {
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
+
+  protected readonly CommuneLevelText = CommuneLevelText;
 }

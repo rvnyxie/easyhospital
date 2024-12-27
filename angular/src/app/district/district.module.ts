@@ -10,6 +10,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzFlexDirective } from 'ng-zorro-antd/flex';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { NzFlexDirective } from 'ng-zorro-antd/flex';
     NzFormModule,
     NzInputDirective,
     NzPaginationModule,
-    NzFlexDirective
+    NzFlexDirective,
+    NzSelectModule
   ]
 })
 export class DistrictModule { }

@@ -9,6 +9,7 @@ import { NzModalContentDirective, NzModalModule, NzModalService } from 'ng-zorro
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
     NzModalContentDirective,
     NzFormModule,
     NzInputDirective,
-    NzPaginationComponent
+    NzPaginationComponent,
+    NzSelectModule
   ],
   providers: [
     NzModalService

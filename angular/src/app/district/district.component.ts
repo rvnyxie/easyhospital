@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DistrictDto, DistrictService } from '@proxy/districts';
+import { DistrictDto, DistrictLevel, DistrictService } from '@proxy/districts';
+import { DistrictLevelText } from '../shared/enum-mapping';
+import { getEnumOptions } from '../shared/util';
 
 @Component({
   selector: 'app-district',
@@ -19,6 +20,8 @@ export class DistrictComponent implements OnInit {
     search: '',
     pageIndex: 1,
   };
+
+  districtLevels = getEnumOptions(DistrictLevel);
 
   // Modal
   isModalOpen = false;
@@ -120,4 +123,6 @@ export class DistrictComponent implements OnInit {
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
+
+  protected readonly DistrictLevelText = DistrictLevelText;
 }

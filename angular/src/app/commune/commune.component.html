@@ -17,11 +17,11 @@
   >
     <thead>
     <tr>
-      <th nzWidth="50px">STT</th>
-      <th nzShowSort nzWidth="100px">Code</th>
-      <th nzShowSort nzWidth="150px">Name</th>
+      <th nzWidth="70px">STT</th>
+      <th nzShowSort nzWidth="70px">Code</th>
+      <th nzShowSort nzWidth="200px">Name</th>
       <th nzWidth="200px">English Name</th>
-      <th nzShowSort nzWidth="100px">Level</th>
+      <th nzShowSort nzWidth="150px">Level</th>
       <th nzWidth="150px">Decision Date</th>
       <th nzWidth="150px">Effective Date</th>
       <th nzWidth="100px">Population</th>
@@ -36,7 +36,7 @@
       <td>{{ commune.code }}</td>
       <td>{{ commune.name }}</td>
       <td>{{ commune.englishName }}</td>
-      <td>{{ commune.level }}</td>
+      <td>{{ CommuneLevelText[commune.level] }}</td>
       <td>{{ commune.decisionDate }}</td>
       <td>{{ commune.effectiveDate }}</td>
       <td>{{ commune.population }}</td>
@@ -121,7 +121,16 @@
         <nz-form-item>
           <nz-form-label nzFor="level" nzRequired>Level</nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="Please input commune level">
-            <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />
+            <nz-select
+              formControlName='level'
+              nzPlaceHolder='Enter level'
+            >
+              <nz-option
+                *ngFor='let level of communeLevels'
+                [nzLabel]='level.label'
+                [nzValue]='level.value'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </form>

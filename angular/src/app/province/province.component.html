@@ -18,10 +18,10 @@
     <thead>
       <tr>
         <th nzWidth="50px">STT</th>
-        <th nzShowSort nzWidth="100px">Code</th>
-        <th nzShowSort nzWidth="150px">Name</th>
+        <th nzShowSort nzWidth="70px">Code</th>
+        <th nzShowSort nzWidth="200px">Name</th>
         <th nzWidth="200px">English Name</th>
-        <th nzShowSort nzWidth="100px">Level</th>
+        <th nzShowSort nzWidth="200px">Level</th>
         <th nzWidth="150px">Decision Date</th>
         <th nzWidth="150px">Effective Date</th>
         <th nzWidth="100px">Population</th>
@@ -36,7 +36,7 @@
         <td>{{ province.code }}</td>
         <td>{{ province.name }}</td>
         <td>{{ province.englishName }}</td>
-        <td>{{ province.level }}</td>
+        <td>{{ ProvinceLevelText[province.level] }}</td>
         <td>{{ province.decisionDate }}</td>
         <td>{{ province.effectiveDate }}</td>
         <td>{{ province.population }}</td>
@@ -122,7 +122,17 @@
         <nz-form-item>
           <nz-form-label nzFor="level" nzRequired>Level</nz-form-label>
           <nz-form-control nzHasFeedback nzErrorTip="Please select province level">
-            <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />
+            <nz-select
+              formControlName='level'
+              nzPlaceHolder='Select level'
+            >
+              <nz-option
+                *ngFor="let level of provinceLevels"
+                [nzValue]='level.value'
+                [nzLabel]='level.label'
+              ></nz-option>
+            </nz-select>
+<!--            <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />-->
           </nz-form-control>
         </nz-form-item>
       </form>
