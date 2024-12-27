@@ -146,6 +146,7 @@
     [(nzVisible)]="isModalOpen"
     [nzTitle]="modalTitle"
     [nzCentered]="true"
+    [nzOkDisabled]='patientForm.invalid'
     (nzOnCancel)="handleModalCancel()"
     (nzOnOk)="handleModalConfirm()"
   >
@@ -158,39 +159,39 @@
         (ngSubmit)="handleModalConfirm()" nz-form
       >
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="code">Code</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="code" nzRequired>Code</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please input patient code">
             <input nz-input formControlName="code" name="code" type="text" id="code" placeholder="Enter patient code" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="name">Name</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="name" nzRequired>Name</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please input patient name">
             <input nz-input formControlName="name" name="name" type="text" id="name" placeholder="Enter patient name" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="provinceCode">Province Code</nz-form-label>
-          <nz-form-control [nzSpan]="null">
-            <input nz-input formControlName="provinceCode" name="provinceCode" type="text" id="provinceCode" placeholder="Enter province code"  />
+          <nz-form-label nzFor="provinceCode" nzRequired>Province Code</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select province!">
+            <input nz-input formControlName="provinceCode" name="provinceCode" type="text" id="provinceCode" placeholder="Select province code"  />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="districtCode">District Code</nz-form-label>
-          <nz-form-control [nzSpan]="null">
-            <input nz-input formControlName="districtCode" name="districtCode" type="text" id="districtCode" placeholder="Enter district code" />
+          <nz-form-label nzFor="districtCode" nzRequired>District Code</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select province!">
+            <input nz-input formControlName="districtCode" name="districtCode" type="text" id="districtCode" placeholder="Select district code" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="communeCode">Commune Code</nz-form-label>
-          <nz-form-control [nzSpan]="null">
-            <input nz-input formControlName="communeCode" name="communeCode" type="text" id="communeCode" placeholder="Enter commune code" />
+          <nz-form-label nzFor="communeCode" nzRequired>Commune Code</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select province!">
+            <input nz-input formControlName="communeCode" name="communeCode" type="text" id="communeCode" placeholder="Select commune code" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="hospitalId">Hospital ID</nz-form-label>
-          <nz-form-control [nzSpan]="null">
-            <input nz-input formControlName="hospitalId" name="hospitalId" type="text" id="hospitalId" placeholder="Enter hospital ID" />
+          <nz-form-label nzFor="hospitalId" nzRequired>Hospital ID</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select hospital">
+            <input nz-input formControlName="hospitalId" name="hospitalId" type="text" id="hospitalId" placeholder="Select hospital ID" />
           </nz-form-control>
         </nz-form-item>
       </form>

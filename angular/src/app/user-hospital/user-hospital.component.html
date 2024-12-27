@@ -75,6 +75,7 @@
     [(nzVisible)]="isModalOpen"
     [nzTitle]="modalTitle"
     [nzCentered]="true"
+    [nzOkDisabled]='userHospitalForm.invalid'
     (nzOnCancel)="handleModalCancel()"
     (nzOnOk)="handleModalConfirm()"
   >
@@ -87,14 +88,14 @@
         (ngSubmit)="handleModalConfirm()" nz-form
       >
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="userId">User ID</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="userId" nzRequired>User ID</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select user">
             <input nz-input formControlName="userId" name="userId" type="text" id="userId" placeholder="Enter user ID" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="hospitalId">Hospital ID</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="hospitalId" nzRequired>Hospital ID</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please select hospital">
             <input nz-input formControlName="hospitalId" name="hospitalId" type="text" id="hospitalId" placeholder="Enter hospital ID" />
           </nz-form-control>
         </nz-form-item>

@@ -56,3 +56,21 @@
   height: 20px;
   background-image: url('/assets/images/getting-started/x.svg');
 }
+
+/* Global move the require indicator from form item to the right of label name */
+.ant-form-item-required {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.ant-form-item-required::before {
+  order: 2; /* Move the indicator to the end */
+  content: "*";
+  margin-left: 0.25rem; /* Add spacing between label and indicator */
+  color: #ff4d4f; /* Default required color */
+}
+
+.ant-form-item-required::after {
+  content: ''; /* Remove the default asterisk from the start */
+}

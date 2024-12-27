@@ -101,26 +101,26 @@
         (ngSubmit)="handleModalConfirm()" nz-form
       >
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="code">District Code</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="code" nzRequired>District Code</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please input district code">
             <input nz-input formControlName="code" name="code" type="text" id="code" placeholder="Enter code" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="name">District Name</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="name" nzRequired>District Name</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please input district name">
             <input nz-input formControlName="name" name="name" type="text" id="name" placeholder="Enter name"  />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="englishName">English Name</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="englishName">English Name</nz-form-label>
+          <nz-form-control nzHasFeedback>
             <input nz-input formControlName="englishName" name="englishName" type="text" id="englishName" placeholder="Enter English name" />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSpan]="null" nzFor="level">Level</nz-form-label>
-          <nz-form-control [nzSpan]="null">
+          <nz-form-label nzFor="level" nzRequired>Level</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip="Please input district level">
             <input nz-input formControlName="level" name="level" type="text" id="level" placeholder="Enter level" />
           </nz-form-control>
         </nz-form-item>
