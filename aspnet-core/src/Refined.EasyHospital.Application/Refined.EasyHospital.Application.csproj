@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Refined.EasyHospital.Domain\Refined.EasyHospital.Domain.csproj" />
     <ProjectReference Include="..\Refined.EasyHospital.Application.Contracts\Refined.EasyHospital.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Refined.EasyHospital.EntityFrameworkCore\Refined.EasyHospital.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

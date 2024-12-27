@@ -26,8 +26,8 @@
     <tbody>
     <tr *ngFor='let userHospital of userHospitalTable.data; let idx = index'>
       <td>{{ query.skipCount + 1 + idx }}</td>
-      <td>{{ userHospital.userId }}</td>
-      <td>{{ userHospital.hospitalId }}</td>
+      <td>{{ userHospital.userName }}</td>
+      <td>{{ userHospital.hospitalName }}</td>
       <td class='table-actions'>
         <button
           nz-button

@@ -7,7 +7,9 @@ export interface UserHospitalCreateDto {
 
 export interface UserHospitalDto extends AuditedEntityDto<string> {
   userId?: string;
+  userName?: string;
   hospitalId?: string;
+  hospitalName?: string;
 }
 
 export interface UserHospitalUpdateDto {

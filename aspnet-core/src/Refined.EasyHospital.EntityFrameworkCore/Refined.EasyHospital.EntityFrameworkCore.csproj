@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Dapper" Version="8.3.0" />
+    <ProjectReference Include="..\Refined.EasyHospital.Application.Contracts\Refined.EasyHospital.Application.Contracts.csproj" />
     <ProjectReference Include="..\Refined.EasyHospital.Domain\Refined.EasyHospital.Domain.csproj" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.MySQL" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="8.3.0" />

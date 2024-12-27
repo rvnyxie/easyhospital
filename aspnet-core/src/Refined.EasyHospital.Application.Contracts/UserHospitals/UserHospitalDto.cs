@@ -10,6 +10,10 @@ namespace Refined.EasyHospital.UserHospitals
     {
         public Guid UserId { get; set; }
 
+        public string UserName { get; set; } = string.Empty;
+
         public Guid HospitalId { get; set; }
+
+        public string HospitalName { get; set; } = string.Empty;
     }
 }

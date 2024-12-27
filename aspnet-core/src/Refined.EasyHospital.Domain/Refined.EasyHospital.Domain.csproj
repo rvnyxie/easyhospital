@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Refined.EasyHospital.Application.Contracts\Refined.EasyHospital.Application.Contracts.csproj" />
     <ProjectReference Include="..\Refined.EasyHospital.Domain.Shared\Refined.EasyHospital.Domain.Shared.csproj" />
   </ItemGroup>
 

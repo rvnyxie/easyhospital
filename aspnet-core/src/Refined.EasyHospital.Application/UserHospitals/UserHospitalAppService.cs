@@ -26,9 +26,7 @@ namespace Refined.EasyHospital.UserHospitals
             var pageSize = input.MaxResultCount;
             var currentPage = input.SkipCount / input.MaxResultCount + 1;
 
-            var (userHospitals, totalCount) = await userHospitalDapperRepository.GetManyAsync(search, pageSize, currentPage);
-
-            var userHospitalDtos = await MapToGetListOutputDtosAsync(userHospitals);
+            var (userHospitalDtos, totalCount) = await userHospitalDapperRepository.GetManyDtosAsync(search, pageSize, currentPage);
 
             return new PagedResultDto<UserHospitalDto>(
                 totalCount,
