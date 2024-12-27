@@ -133,6 +133,21 @@
             </nz-select>
           </nz-form-control>
         </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzFor='provinceCode' nzRequired>Province</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select province'>
+            <nz-select
+              formControlName='provinceCode'
+              nzPlaceHolder='Select province'
+            >
+              <nz-option
+                *ngFor='let province of provinces'
+                [nzLabel]='province.name'
+                [nzValue]='province.code'
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </form>
 
       <!-- Delete Confirmation -->

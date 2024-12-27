@@ -12,6 +12,8 @@ import { getEnumOptions } from '../shared/util';
   providers: [ListService],
 })
 export class ProvinceComponent implements OnInit {
+  protected readonly ProvinceLevelText = ProvinceLevelText;
+
   province = { totalCount: 0, items: [] } as PagedResultDto<ProvinceDto>;
   query = {
     skipCount: 0,
@@ -123,6 +125,4 @@ export class ProvinceComponent implements OnInit {
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
-
-  protected readonly ProvinceLevelText = ProvinceLevelText;
 }

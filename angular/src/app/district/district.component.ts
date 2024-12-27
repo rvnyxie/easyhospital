@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DistrictDto, DistrictLevel, DistrictService } from '@proxy/districts';
 import { DistrictLevelText } from '../shared/enum-mapping';
 import { getEnumOptions } from '../shared/util';
+import { ProvinceDto, ProvinceService } from '@proxy/provinces';
+import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
 
 @Component({
   selector: 'app-district',
@@ -12,16 +14,24 @@ import { getEnumOptions } from '../shared/util';
   providers: [ListService],
 })
 export class DistrictComponent implements OnInit {
-  district = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
-  query = {
+  protected readonly DistrictLevelText = DistrictLevelText;
+
+  readonly defaultLocalityQuery: LocalityPagedAndSortedResultRequestDto = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 100,
     sorting: '',
     search: '',
+  }
+
+  district = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
+  query = {
+    ...this.defaultLocalityQuery,
+    maxResultCount: 10,
     pageIndex: 1,
   };
 
   districtLevels = getEnumOptions(DistrictLevel);
+  provinces: ProvinceDto[] = [];
 
   // Modal
   isModalOpen = false;
@@ -33,13 +43,15 @@ export class DistrictComponent implements OnInit {
 
   constructor(public list: ListService,
               private districtService: DistrictService,
+              private provinceService: ProvinceService,
               private fb: FormBuilder) {
     this.districtForm = this.fb.group({
       id: [''],
       code: ['', [Validators.required]],
       name: ['', [Validators.required]],
       englishName: [''],
-      level: ['', [Validators.required]]
+      level: ['', [Validators.required]],
+      provinceCode: ['', [Validators.required]],
     });
   }
 
@@ -50,6 +62,12 @@ export class DistrictComponent implements OnInit {
       this.district = response;
       console.log(this.district);
     });
+
+    // Load provinces
+    const provinceQuery = { ...this.defaultLocalityQuery };
+    this.provinceService.getList(provinceQuery).subscribe((response) => {
+      this.provinces = response.items
+    })
   }
 
   onPageIndexChange(pageIndex: number) {
@@ -123,6 +141,4 @@ export class DistrictComponent implements OnInit {
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
-
-  protected readonly DistrictLevelText = DistrictLevelText;
 }

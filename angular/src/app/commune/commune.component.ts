@@ -4,6 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommuneDto, CommuneLevel, CommuneService } from '@proxy/communes';
 import { CommuneLevelText } from '../shared/enum-mapping';
 import { getEnumOptions } from '../shared/util';
+import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
+import { DistrictDto, DistrictService } from '@proxy/districts';
+import { ProvinceDto, ProvinceService } from '@proxy/provinces';
 
 @Component({
   selector: 'app-commune',
@@ -12,16 +15,28 @@ import { getEnumOptions } from '../shared/util';
   providers: [ListService],
 })
 export class CommuneComponent implements OnInit {
-  commune = { totalCount: 0, items: [] } as PagedResultDto<CommuneDto>;
-  query = {
+  protected readonly CommuneLevelText = CommuneLevelText;
+
+  readonly defaultLocalityQuery: LocalityPagedAndSortedResultRequestDto = {
     skipCount: 0,
-    maxResultCount: 10,
+    maxResultCount: 100,
     sorting: '',
     search: '',
+  }
+
+  commune = { totalCount: 0, items: [] } as PagedResultDto<CommuneDto>;
+  query = {
+    ...this.defaultLocalityQuery,
+    maxResultCount: 10,
     pageIndex: 1,
   };
 
   communeLevels = getEnumOptions(CommuneLevel);
+
+  provinceQuery = { ...this.defaultLocalityQuery };
+  districtQuery = { ...this.defaultLocalityQuery };
+  provinces: ProvinceDto[] = [];
+  districts: DistrictDto[] = [];
 
   // Modal
   isModalOpen = false;
@@ -32,6 +47,8 @@ export class CommuneComponent implements OnInit {
   selectedCommune: CommuneDto;
 
   constructor(public list: ListService,
+              private provinceService: ProvinceService,
+              private districtService: DistrictService,
               private communeService: CommuneService,
               private fb: FormBuilder) {
     this.communeForm = this.fb.group({
@@ -39,7 +56,9 @@ export class CommuneComponent implements OnInit {
       code: ['', [Validators.required]],
       name: ['', [Validators.required]],
       englishName: [''],
-      level: ['', [Validators.required]]
+      level: ['', [Validators.required]],
+      provinceCode: ['', [Validators.required]],
+      districtCode: ['', [Validators.required]],
     });
   }
 
@@ -49,6 +68,11 @@ export class CommuneComponent implements OnInit {
     this.list.hookToQuery(communeStreamCreator).subscribe((response) => {
       this.commune = response;
       console.log(this.commune);
+    });
+
+    // Load initial provinces
+    this.provinceService.getList(this.provinceQuery).subscribe((response) => {
+      this.provinces = response.items;
     });
   }
 
@@ -117,11 +141,25 @@ export class CommuneComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.selectedCommune = null;
+
+    // Reset query
+    this.districtQuery = { ...this.defaultLocalityQuery };
   }
 
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }
 
-  protected readonly CommuneLevelText = CommuneLevelText;
+  handleProvinceChange(provinceCode: string) {
+    if (provinceCode) {
+      this.districtQuery.provinceCode = provinceCode;
+      this.loadDistricts();
+    }
+  }
+
+  loadDistricts() {
+    this.districtService.getList(this.districtQuery).subscribe((response) => {
+      this.districts = response.items;
+    })
+  }
 }

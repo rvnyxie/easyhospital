@@ -133,6 +133,38 @@
             </nz-select>
           </nz-form-control>
         </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzFor='provinceCode' nzRequired>Province</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select province'>
+            <nz-select
+              formControlName='provinceCode'
+              nzPlaceHolder='Select province'
+              (ngModelChange)='handleProvinceChange($event)'
+            >
+              <nz-option
+                *ngFor='let province of provinces'
+                [nzLabel]='province.name'
+                [nzValue]='province.code'
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzFor='districtCode' nzRequired>District</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select district'>
+            <nz-select
+              formControlName='districtCode'
+              nzPlaceHolder='Select district'
+              [nzDisabled]='!districtQuery.provinceCode'
+            >
+              <nz-option
+                *ngFor='let district of districts'
+                [nzLabel]='district.name'
+                [nzValue]='district.code'
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </form>
 
       <!-- Delete Confirmation -->
