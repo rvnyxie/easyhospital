@@ -72,7 +72,7 @@
   <!-- Table -->
   <nz-table
     #hospitalTable
-    [nzData]='hospital.items'
+    [nzData]='hospitals.items'
     [nzBordered]='true'
     [nzSize]='"middle"'
     [nzShowPagination]='false'
@@ -83,9 +83,9 @@
     <tr>
       <th nzWidth="50px">STT</th>
       <th nzShowSort nzWidth="150px">Name</th>
-      <th nzWidth="200px">Province Code</th>
-      <th nzWidth="200px">District Code</th>
-      <th nzWidth="200px">Commune Code</th>
+      <th nzWidth="200px">Province</th>
+      <th nzWidth="200px">District</th>
+      <th nzWidth="200px">Commune</th>
       <th nzWidth="180px">Actions</th>
     </tr>
     </thead>
@@ -93,9 +93,9 @@
     <tr *ngFor='let hospital of hospitalTable.data; let idx = index'>
       <td>{{ query.skipCount + 1 + idx }}</td>
       <td>{{ hospital.name }}</td>
-      <td>{{ hospital.provinceCode }}</td>
-      <td>{{ hospital.districtCode }}</td>
-      <td>{{ hospital.communeCode }}</td>
+      <td>{{ hospital.provinceName }}</td>
+      <td>{{ hospital.districtName }}</td>
+      <td>{{ hospital.communeName }}</td>
       <td class='table-actions'>
         <button
           nz-button
@@ -125,7 +125,7 @@
   <div class='navigation'>
     <nz-pagination
       [(nzPageIndex)]="query.pageIndex"
-      [nzTotal]="hospital.totalCount"
+      [nzTotal]="hospitals.totalCount"
       [(nzPageSize)]="query.maxResultCount"
       [nzShowTotal]="rangeTemplate"
       nzShowSizeChanger
@@ -162,22 +162,58 @@
             <input nz-input formControlName="name" name="name" type="text" id="name" placeholder="Enter hospital name" />
           </nz-form-control>
         </nz-form-item>
+
         <nz-form-item>
-          <nz-form-label nzFor="provinceCode" nzRequired>Province Code</nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="Please select province!">
-            <input nz-input formControlName="provinceCode" name="provinceCode" type="text" id="provinceCode" placeholder="Enter province code"  />
+          <nz-form-label nzFor='province'>Province</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select province'>
+            <nz-select
+              nzPlaceHolder='Select province'
+              formControlName='provinceCode'
+              (nzOnSearch)='onProvinceSearch($event)'
+              (ngModelChange)='onProvinceUCFormChange($event)'
+            >
+              <nz-option
+                *ngFor='let province of provinceResultsInModal.items'
+                [nzLabel]='province.name'
+                [nzValue]='province.code'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label nzFor="districtCode" nzRequired>District Code</nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="Please select district!">
-            <input nz-input formControlName="districtCode" name="districtCode" type="text" id="districtCode" placeholder="Enter district code" />
+          <nz-form-label nzFor='district'>District</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select district'>
+            <nz-select
+              nzPlaceHolder='Select district'
+              formControlName='districtCode'
+              [nzDisabled]='!districtUCQuery.provinceCode'
+              (nzOnSearch)='onDistrictSearch($event)'
+              (ngModelChange)='onDistrictUCFormChange($event)'
+            >
+              <nz-option
+                *ngFor='let district of districtResultsInModal.items'
+                [nzLabel]='district.name'
+                [nzValue]='district.code'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label nzFor="communeCode" nzRequired>Commune Code</nz-form-label>
-          <nz-form-control nzHasFeedback nzErrorTip="Please select commune!">
-            <input nz-input formControlName="communeCode" name="communeCode" type="text" id="communeCode" placeholder="Enter commune code" />
+          <nz-form-label nzFor='commune'>Commune</nz-form-label>
+          <nz-form-control nzHasFeedback nzErrorTip='Please select commune'>
+            <nz-select
+              nzPlaceHolder='Select commune'
+              formControlName='communeCode'
+              [nzDisabled]='!communeUCQuery.districtCode'
+              (nzOnSearch)="onCommuneSearch($event)"
+              (ngModelChange)='onCommuneUCFormChange($event)'
+            >
+              <nz-option
+                *ngFor='let commune of communeResultsInModal.items'
+                [nzLabel]='commune.name'
+                [nzValue]='commune.code'
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </form>

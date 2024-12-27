@@ -7052,6 +7052,18 @@
           "regex": null
         },
         {
+          "name": "ProvinceName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "DistrictCode",
           "jsonName": null,
           "type": "System.String",
@@ -7064,7 +7076,31 @@
           "regex": null
         },
         {
+          "name": "DistrictName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "CommuneCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CommuneName",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",

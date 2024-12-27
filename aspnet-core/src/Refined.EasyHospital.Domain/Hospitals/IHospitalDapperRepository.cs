@@ -21,5 +21,17 @@ namespace Refined.EasyHospital.Hospitals
         /// <param name="communeCode">Commune Code</param>
         /// <returns></returns>
         Task<(List<Hospital>, int)> GetManyHospitalWithPaginationAndSearch(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode);
+
+        /// <summary>
+        /// Asynchronously get many hospital DTOs with pagination and searches
+        /// </summary>
+        /// <param name="search">Search term</param>
+        /// <param name="pageSize">Page size value</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="provinceCode">Province Code</param>
+        /// <param name="districtCode">District Code</param>
+        /// <param name="communeCode">Commune Code</param>
+        /// <returns></returns>
+        Task<(List<HospitalDto>, int)> GetManyDtosWithPaginationAndSearchAsync(string? search, int pageSize, int currentPage, string? provinceCode, string? districtCode, string? communeCode);
     }
 }

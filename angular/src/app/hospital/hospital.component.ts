@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HospitalDto, HospitalService } from '@proxy/hospitals';
@@ -30,21 +30,31 @@ export class HospitalComponent implements OnInit {
     maxResultCount: 10
   };
 
-  // Queries
+  // Queries used in page and search
   query = { ...this.defaultHospitalQuery };
-  provinceQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
-  districtQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
-  communeQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  provinceSearchQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  districtSearchQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  communeSearchQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
 
-  // Result variables
-  hospital = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
+  // Queries used in form modal
+  provinceUCQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  districtUCQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+  communeUCQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
+
+  // Results used in page and search
+  hospitals = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
   provinces = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
   districts = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
   communes = { totalCount : 0, items: [] } as PagedResultDto<CommuneDto>;
 
+  // Results used in modal
+  provinceResultsInModal = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
+  districtResultsInModal = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
+  communeResultsInModal = { totalCount : 0, items: [] } as PagedResultDto<CommuneDto>;
+
   // Modal
   isModalOpen = false;
-  modalMode: 'create' | 'update' | 'delete' = 'create'; // Current mode
+  modalMode: 'create' | 'update' | 'delete' | 'undefined' = 'undefined'; // Current mode
   modalTitle = 'Default modal title';
   deleteMessage = '';
   hospitalForm: FormGroup; // Reactive form for create/update
@@ -55,7 +65,8 @@ export class HospitalComponent implements OnInit {
               private provinceService: ProvinceService,
               private districtService: DistrictService,
               private communeService: CommuneService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private cdr: ChangeDetectorRef) {
     this.hospitalForm = this.fb.group({
       id: [''],
       name: ['', [Validators.required]],
@@ -72,8 +83,7 @@ export class HospitalComponent implements OnInit {
 
     // Hook hospital stream creators to list service
     this.list.hookToQuery(hospitalStreamCreator).subscribe((response) => {
-      this.hospital = response;
-      console.log(this.hospital);
+      this.hospitals = response;
     });
 
     // Load initial provinces
@@ -83,24 +93,43 @@ export class HospitalComponent implements OnInit {
   // Province-related methods
 
   loadProvinces() {
-    this.provinceService.getList(this.provinceQuery).subscribe((response) => {
-      this.provinces = response;
-      console.log('Provinces:', this.provinces);
+    // Open modal
+    if (this.modalMode !== 'undefined') {
+      this.provinceService.getList(this.provinceUCQuery).subscribe((response) => {
+        this.provinceResultsInModal = response;
 
-      // Reset dependent queries
-      this.query.districtCode = null;
-      this.query.communeCode = null;
+        // Reset dependent queries
+        if (this.modalMode === 'create') {
+          this.districtUCQuery.provinceCode = null
+          this.communeUCQuery.districtCode = null
 
-      this.districts.totalCount = 0;
-      this.districts.items = [];
+          this.districtResultsInModal.totalCount = 0;
+          this.districtResultsInModal.items = [];
 
-      this.communes.totalCount = 0;
-      this.communes.items = [];
-    });
+          this.communeResultsInModal.totalCount = 0;
+          this.communeResultsInModal.items = [];
+        }
+      })
+    } else { // Not loading for opening modal
+      this.provinceService.getList(this.provinceSearchQuery).subscribe((response) => {
+        this.provinces = response;
+
+        // Reset dependent queries
+        this.query.districtCode = null;
+        this.query.communeCode = null;
+
+        this.districts.totalCount = 0;
+        this.districts.items = [];
+
+        this.communes.totalCount = 0;
+        this.communes.items = [];
+      });
+    }
+
   }
 
   onProvinceSearch(search: string) {
-    this.provinceQuery.search = search;
+    this.provinceSearchQuery.search = search;
     this.loadProvinces();
   }
 
@@ -108,8 +137,15 @@ export class HospitalComponent implements OnInit {
     if (provinceCode) {
       // Select province will need to update the queries
       this.query.provinceCode = provinceCode;
-      this.districtQuery.provinceCode = provinceCode;
+      this.districtSearchQuery.provinceCode = provinceCode;
 
+      this.loadDistricts();
+    }
+  }
+
+  onProvinceUCFormChange(provinceCode: string) {
+    if (provinceCode) {
+      this.districtUCQuery.provinceCode = provinceCode;
       this.loadDistricts();
     }
   }
@@ -117,22 +153,37 @@ export class HospitalComponent implements OnInit {
   // District-related methods
 
   loadDistricts() {
-    if (!this.districtQuery.provinceCode) return;
+    // Load districts when opening modal
+    if (this.modalMode !== 'undefined') {
+      this.districtService.getList(this.districtUCQuery).subscribe((response) => {
+        this.districtResultsInModal = response;
+        console.log("District results in modal:", this.districtResultsInModal);
 
-    this.districtService.getList(this.districtQuery).subscribe((response) => {
-      this.districts = response;
-      console.log('Districts:', this.districts);
+        // Reset dependent query
+        this.communeUCQuery.communeCode = null;
 
-      // Reset dependent query
-      this.query.communeCode = null;
+        this.communeResultsInModal.totalCount = 0;
+        this.communeResultsInModal.items = [];
+      })
+    } else { // Not when opening modal
+      if (!this.districtSearchQuery.provinceCode) return;
 
-      this.communes.totalCount = 0;
-      this.communes.items = [];
-    });
+      this.districtService.getList(this.districtSearchQuery).subscribe((response) => {
+        this.districts = response;
+        console.log('District results for search:', this.districts);
+
+        // Reset dependent query
+        this.query.communeCode = null;
+
+        this.communes.totalCount = 0;
+        this.communes.items = [];
+      });
+    }
+
   }
 
   onDistrictSearch(search: string) {
-    this.districtQuery.search = search;
+    this.districtSearchQuery.search = search;
     this.loadDistricts();
   }
 
@@ -140,8 +191,15 @@ export class HospitalComponent implements OnInit {
     if (districtCode) {
       // Select district will need to update the queries
       this.query.districtCode = districtCode;
-      this.communeQuery.districtCode = districtCode;
+      this.communeSearchQuery.districtCode = districtCode;
 
+      this.loadCommunes();
+    }
+  }
+
+  onDistrictUCFormChange(districtCode: string) {
+    if (districtCode) {
+      this.communeUCQuery.districtCode = districtCode;
       this.loadCommunes();
     }
   }
@@ -149,16 +207,24 @@ export class HospitalComponent implements OnInit {
   // Commune-related methods
 
   loadCommunes() {
-    if (!this.communeQuery.districtCode) return;
+    // Load communes when opening modal
+    if (this.modalMode !== 'undefined') {
+      this.communeService.getList(this.communeUCQuery).subscribe((response) => {
+        this.communeResultsInModal = response;
+        console.log("Commune results in modal:", this.communeResultsInModal);
+      })
+    } else { // Load when not in modal
+      if (!this.communeSearchQuery.districtCode) return;
 
-    this.communeService.getList(this.communeQuery).subscribe((response) => {
-      this.communes = response;
-      console.log('Communes:', this.communes);
-    });
+      this.communeService.getList(this.communeSearchQuery).subscribe((response) => {
+        this.communes = response;
+        console.log('Commune results for search:', this.communes);
+      });
+    }
   }
 
   onCommuneSearch(search: string) {
-    this.communeQuery.search = search;
+    this.communeSearchQuery.search = search;
     this.loadCommunes();
   }
 
@@ -168,6 +234,13 @@ export class HospitalComponent implements OnInit {
     }
   }
 
+  onCommuneUCFormChange(communeCode: string) {
+    if (communeCode) {
+      this.communeUCQuery.communeCode = communeCode;
+    }
+  }
+
+  // Handle page index change
   onPageIndexChange(pageIndex: number) {
     this.query.pageIndex = pageIndex;
     this.query.skipCount = (pageIndex - 1) * this.query.maxResultCount;
@@ -178,9 +251,9 @@ export class HospitalComponent implements OnInit {
   // Search form methods
   resetSearch() {
     this.query = { ...this.defaultHospitalQuery };
-    this.provinceQuery = { ...this.defaultLocalityQuery };
-    this.districtQuery = { ...this.defaultLocalityQuery };
-    this.communeQuery = { ...this.defaultLocalityQuery };
+    this.provinceSearchQuery = { ...this.defaultLocalityQuery };
+    this.districtSearchQuery = { ...this.defaultLocalityQuery };
+    this.communeSearchQuery = { ...this.defaultLocalityQuery };
 
     this.loadProvinces();
     this.list.get();
@@ -191,16 +264,19 @@ export class HospitalComponent implements OnInit {
     this.list.get();
   }
 
+  // Handle page size change
   onPageSizeChange(pageSize: number) {
     this.query.maxResultCount = pageSize;
 
     this.list.get();
   }
 
+  // Handle modal cancel
   handleModalCancel() {
     this.closeModal();
   }
 
+  // Handle modal confirm
   handleModalConfirm(): void {
     if (this.modalMode === 'create' || this.modalMode === 'update') {
       if (this.hospitalForm.valid) {
@@ -227,6 +303,7 @@ export class HospitalComponent implements OnInit {
     }
   }
 
+  // Handle open modal
   openModal(mode: 'create' | 'update' | 'delete', hospital?: HospitalDto): void {
     this.isModalOpen = true;
     this.modalMode = mode;
@@ -239,18 +316,37 @@ export class HospitalComponent implements OnInit {
       this.modalTitle = 'Update Hospital';
       this.hospitalForm.patchValue(hospital); // Populate form with existing data
       this.selectedHospital = hospital;
+
+      // Load dependent dropdowns
+      this.loadProvinces();
+      this.districtUCQuery.provinceCode = hospital.provinceCode;
+      this.loadDistricts();
+      this.communeUCQuery.districtCode = hospital.districtCode;
+      this.loadCommunes();
+
     } else if (mode === 'delete') {
       this.modalTitle = 'Delete Hospital';
       this.deleteMessage = `Are you sure you want to delete the hospital "${hospital?.name}"?`;
       this.selectedHospital = hospital;
     }
+
+    // Detect changes manually to avoid ExpressionChangedAfterItHasBeenCheckedError
+    this.cdr.detectChanges();
   }
 
+  // Handle close modal
   closeModal() {
     this.isModalOpen = false;
+    this.modalMode = 'undefined';
     this.selectedHospital = null;
+
+    // Reset UC queries
+    this.provinceUCQuery = { ...this.defaultLocalityQuery };
+    this.districtUCQuery = { ...this.defaultLocalityQuery };
+    this.communeUCQuery = { ...this.defaultLocalityQuery };
   }
 
+  // Get form mode
   get isFormMode(): boolean {
     return this.modalMode === 'create' || this.modalMode === 'update';
   }

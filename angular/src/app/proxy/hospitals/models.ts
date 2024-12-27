@@ -11,8 +11,11 @@ export interface HospitalCreateDto {
 export interface HospitalDto extends AuditedEntityDto<string> {
   name?: string;
   provinceCode?: string;
+  provinceName?: string;
   districtCode?: string;
+  districtName?: string;
   communeCode?: string;
+  communeName?: string;
 }
 
 export interface HospitalPagedAndSortedResultRequestDto extends ExtendedPagedAndSortedResultRequestDto {
