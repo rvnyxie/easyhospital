@@ -15,7 +15,7 @@
         nzAllowClear
         nzShowSearch
         nzServerSearch
-        [(ngModel)]='query.provinceCode'
+        [(ngModel)]='hospitalQuery.provinceCode'
         (nzOnSearch)='onProvinceSearch($event)'
         (ngModelChange)='onProvinceChange($event)'
       >
@@ -30,8 +30,8 @@
         nzPlaceHolder='Select district'
         nzAllowClear
         nzShowSearch
-        [nzDisabled]='!query.provinceCode'
-        [(ngModel)]='query.districtCode'
+        [nzDisabled]='!hospitalQuery.provinceCode'
+        [(ngModel)]='hospitalQuery.districtCode'
         (nzOnSearch)='onDistrictSearch($event)'
         (ngModelChange)='onDistrictChange($event)'
       >
@@ -45,8 +45,8 @@
         nzPlaceHolder="Select commune"
         nzAllowClear
         nzShowSearch
-        [nzDisabled]="!query.districtCode"
-        [(ngModel)]="query.communeCode"
+        [nzDisabled]="!hospitalQuery.districtCode"
+        [(ngModel)]="hospitalQuery.communeCode"
         (nzOnSearch)="onCommuneSearch($event)"
         (ngModelChange)='onCommuneChange($event)'
       >
@@ -59,7 +59,7 @@
     <input
       nz-input
       placeholder='Search hospital by code or name'
-      [(ngModel)]='query.search'
+      [(ngModel)]='hospitalQuery.search'
     />
 
     <div class='button-group'>
@@ -76,7 +76,7 @@
     [nzBordered]='true'
     [nzSize]='"middle"'
     [nzShowPagination]='false'
-    [nzPageSize]='query.maxResultCount'
+    [nzPageSize]='hospitalQuery.maxResultCount'
     [nzScroll]='{ x: "1000px" }'
   >
     <thead>
@@ -91,7 +91,7 @@
     </thead>
     <tbody>
     <tr *ngFor='let hospital of hospitalTable.data; let idx = index'>
-      <td>{{ query.skipCount + 1 + idx }}</td>
+      <td>{{ hospitalQuery.skipCount + 1 + idx }}</td>
       <td>{{ hospital.name }}</td>
       <td>{{ hospital.provinceName }}</td>
       <td>{{ hospital.districtName }}</td>
@@ -124,9 +124,9 @@
   <!-- Pagination -->
   <div class='navigation'>
     <nz-pagination
-      [(nzPageIndex)]="query.pageIndex"
+      [(nzPageIndex)]="hospitalQuery.pageIndex"
       [nzTotal]="hospitals.totalCount"
-      [(nzPageSize)]="query.maxResultCount"
+      [(nzPageSize)]="hospitalQuery.maxResultCount"
       [nzShowTotal]="rangeTemplate"
       nzShowSizeChanger
       nzShowQuickJumper
