@@ -206,7 +206,7 @@
               formControlName='communeCode'
               [nzDisabled]='!communeUCQuery.districtCode'
               (nzOnSearch)="onCommuneSearch($event)"
-              (ngModelChange)='onCommuneUCFormChange($event)'
+              (ngModelChange)='onCommuneChange($event, true)'
             >
               <nz-option
                 *ngFor='let commune of communeResultsInModal.items'

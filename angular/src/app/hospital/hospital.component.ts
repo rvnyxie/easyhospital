@@ -217,8 +217,9 @@ export class HospitalComponent implements OnInit {
     this.loadDistricts();
   }
 
-  // District-related methods
-
+  /**
+   * Load districts, set response based on where it is called
+   */
   loadDistricts() {
     const isInModal = this.modalMode !== 'undefined';
 
@@ -274,39 +275,47 @@ export class HospitalComponent implements OnInit {
     this.loadCommunes();
   }
 
-  // Commune-related methods
-
+  /**
+   * Load communes, set response based on where it is called
+   */
   loadCommunes() {
-    // Load communes when opening modal
-    if (this.modalMode !== 'undefined') {
+    const isInModal = this.modalMode !== 'undefined';
+
+    // Load when opening modal
+    if (isInModal) {
       this.communeService.getList(this.communeUCQuery).subscribe((response) => {
         this.communeResultsInModal = response;
-        console.log("Commune results in modal:", this.communeResultsInModal);
       })
     } else { // Load when not in modal
       if (!this.communeSearchQuery.districtCode) return;
 
       this.communeService.getList(this.communeSearchQuery).subscribe((response) => {
         this.communes = response;
-        console.log('Commune results for search:', this.communes);
       });
     }
   }
 
+  /**
+   * Handle on commune search change
+   * @param search Commune search term
+   */
   onCommuneSearch(search: string) {
     this.communeSearchQuery.search = search;
     this.loadCommunes();
   }
 
-  onCommuneChange(communeCode: string) {
-    if (communeCode) {
-      this.query.communeCode = communeCode
-    }
-  }
+  /**
+   * Handle commune change
+   * @param communeCode Code of changed commune
+   * @param isInModal True if is in modal
+   */
+  onCommuneChange(communeCode: string, isInModal?: boolean) {
+    if (!communeCode) return;
 
-  onCommuneUCFormChange(communeCode: string) {
-    if (communeCode) {
+    if (isInModal) {
       this.communeUCQuery.communeCode = communeCode;
+    } else {
+      this.query.communeCode = communeCode;
     }
   }
 
