@@ -170,7 +170,7 @@
               nzPlaceHolder='Select province'
               formControlName='provinceCode'
               (nzOnSearch)='onProvinceSearch($event)'
-              (ngModelChange)='onProvinceUCFormChange($event)'
+              (ngModelChange)='onProvinceChange($event, true)'
             >
               <nz-option
                 *ngFor='let province of provinceResultsInModal.items'

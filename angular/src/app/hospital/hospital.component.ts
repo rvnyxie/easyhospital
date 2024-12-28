@@ -14,7 +14,7 @@ import { LocalityPagedAndSortedResultRequestDto } from '@proxy/base';
   providers: [ListService],
 })
 export class HospitalComponent implements OnInit {
-  // Default queries
+  // Default locality query
   readonly defaultLocalityQuery: LocalityPagedAndSortedResultRequestDto = {
     skipCount: 0,
     maxResultCount: 100,
@@ -24,11 +24,16 @@ export class HospitalComponent implements OnInit {
     districtCode: null,
     communeCode: null,
   }
+
+  // Default hospital query
   readonly defaultHospitalQuery = {
     ...this.defaultLocalityQuery,
     pageIndex: 1,
     maxResultCount: 10
   };
+
+  // Default page result
+  readonly defaultPageResultDto = { totalCount: 0, items: [] };
 
   // Queries used in page and search
   query = { ...this.defaultHospitalQuery };
@@ -42,10 +47,10 @@ export class HospitalComponent implements OnInit {
   communeUCQuery: LocalityPagedAndSortedResultRequestDto = { ...this.defaultLocalityQuery };
 
   // Results used in page and search
-  hospitals = { totalCount: 0, items: [] } as PagedResultDto<HospitalDto>;
-  provinces = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
-  districts = { totalCount: 0, items: [] } as PagedResultDto<DistrictDto>;
-  communes = { totalCount : 0, items: [] } as PagedResultDto<CommuneDto>;
+  hospitals = { ...this.defaultPageResultDto } as PagedResultDto<HospitalDto>;
+  provinces = { ...this.defaultPageResultDto } as PagedResultDto<ProvinceDto>;
+  districts = { ...this.defaultPageResultDto } as PagedResultDto<DistrictDto>;
+  communes = { ...this.defaultPageResultDto } as PagedResultDto<CommuneDto>;
 
   // Results used in modal
   provinceResultsInModal = { totalCount : 0, items: [] } as PagedResultDto<ProvinceDto>;
@@ -92,62 +97,127 @@ export class HospitalComponent implements OnInit {
 
   // Province-related methods
 
+  /**
+   * Load provinces, set response based on where it is called
+   */
   loadProvinces() {
-    // Open modal
-    if (this.modalMode !== 'undefined') {
+    const isInModal = this.modalMode !== 'undefined';
+
+    // Load when opening modal
+    if (isInModal) {
       this.provinceService.getList(this.provinceUCQuery).subscribe((response) => {
         this.provinceResultsInModal = response;
-
-        // Reset dependent queries
-        if (this.modalMode === 'create') {
-          this.districtUCQuery.provinceCode = null
-          this.communeUCQuery.districtCode = null
-
-          this.districtResultsInModal.totalCount = 0;
-          this.districtResultsInModal.items = [];
-
-          this.communeResultsInModal.totalCount = 0;
-          this.communeResultsInModal.items = [];
-        }
       })
-    } else { // Not loading for opening modal
+    } else { // Load when not in modal
       this.provinceService.getList(this.provinceSearchQuery).subscribe((response) => {
         this.provinces = response;
-
-        // Reset dependent queries
-        this.query.districtCode = null;
-        this.query.communeCode = null;
-
-        this.districts.totalCount = 0;
-        this.districts.items = [];
-
-        this.communes.totalCount = 0;
-        this.communes.items = [];
       });
     }
 
+    this.resetDependentAfterSelectProvince(isInModal);
   }
 
+  /**
+   * Reset dependents after selecting province
+   * @param isInModal true if perform in modal
+   */
+  resetDependentAfterSelectProvince(isInModal: boolean) {
+    this.resetDistrictAndCommuneQuery(isInModal);
+    this.resetDistrictAndCommuneResults(isInModal);
+  }
+
+  /**
+   * Reset district and commune queries
+   * @param isInModal true if perform in modal
+   */
+  resetDistrictAndCommuneQuery(isInModal: boolean) {
+    this.resetDistrictQuery(isInModal);
+    this.resetCommuneQuery(isInModal);
+  }
+
+  /**
+   * Reset district query
+   * @param isInModal true if perform in modal
+   */
+  resetDistrictQuery(isInModal: boolean) {
+    if (isInModal) {
+      this.districtUCQuery = { ...this.defaultLocalityQuery };
+    } else {
+      this.districtSearchQuery = { ...this.defaultLocalityQuery };
+    }
+  }
+
+  /**
+   * Reset commune query
+   * @param isInModal true if perform in modal
+   */
+  resetCommuneQuery(isInModal: boolean) {
+    if (isInModal) {
+      this.communeUCQuery = { ...this.defaultLocalityQuery };
+    } else {
+      this.communeSearchQuery = { ...this.defaultLocalityQuery };
+    }
+  }
+
+  /**
+   * Reset district and commune results
+   * @param isInModal true if perform in modal
+   */
+  resetDistrictAndCommuneResults(isInModal: boolean) {
+    this.resetDistrictResults(isInModal);
+    this.resetCommuneResults(isInModal);
+  }
+
+  /**
+   * Reset district results
+   * @param isInModal true if perform in modal
+   */
+  resetDistrictResults(isInModal: boolean) {
+    if (isInModal) {
+      this.districtResultsInModal = { ...this.defaultPageResultDto };
+    } else {
+      this.districts = { ...this.defaultPageResultDto };
+    }
+  }
+
+  /**
+   * Reset commune results
+   * @param isInModal true if perform in modal
+   */
+  resetCommuneResults(isInModal: boolean) {
+    if (isInModal) {
+      this.communeResultsInModal = { ...this.defaultPageResultDto };
+    } else {
+      this.communes = { ...this.defaultPageResultDto };
+    }
+  }
+
+  /**
+   * Handle on province search change
+   * @param search Search term
+   */
   onProvinceSearch(search: string) {
     this.provinceSearchQuery.search = search;
     this.loadProvinces();
   }
 
-  onProvinceChange(provinceCode: string) {
-    if (provinceCode) {
-      // Select province will need to update the queries
+  /**
+   * Handle when province change
+   * @param provinceCode Code of changed province
+   * @param isInModal True if is in modal
+   */
+  onProvinceChange(provinceCode: string, isInModal?: boolean) {
+    if (!provinceCode) return;
+
+    // Select province will need to update the queries
+    if (isInModal) {
+      this.districtUCQuery.provinceCode = provinceCode;
+    } else {
       this.query.provinceCode = provinceCode;
       this.districtSearchQuery.provinceCode = provinceCode;
-
-      this.loadDistricts();
     }
-  }
 
-  onProvinceUCFormChange(provinceCode: string) {
-    if (provinceCode) {
-      this.districtUCQuery.provinceCode = provinceCode;
-      this.loadDistricts();
-    }
+    this.loadDistricts();
   }
 
   // District-related methods
