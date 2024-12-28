@@ -83,7 +83,6 @@ export class HospitalComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Define stream creator
     const hospitalStreamCreator = () => this.hospitalService.getList(this.query);
 
     // Hook hospital stream creators to list service
@@ -94,8 +93,6 @@ export class HospitalComponent implements OnInit {
     // Load initial provinces
     this.loadProvinces();
   }
-
-  // Province-related methods
 
   /**
    * Load provinces, set response based on where it is called
@@ -223,55 +220,58 @@ export class HospitalComponent implements OnInit {
   // District-related methods
 
   loadDistricts() {
-    // Load districts when opening modal
-    if (this.modalMode !== 'undefined') {
+    const isInModal = this.modalMode !== 'undefined';
+
+    // Load when opening modal
+    if (isInModal) {
       this.districtService.getList(this.districtUCQuery).subscribe((response) => {
         this.districtResultsInModal = response;
-        console.log("District results in modal:", this.districtResultsInModal);
-
-        // Reset dependent query
-        this.communeUCQuery.communeCode = null;
-
-        this.communeResultsInModal.totalCount = 0;
-        this.communeResultsInModal.items = [];
       })
-    } else { // Not when opening modal
+    } else { // Load when not opening modal
       if (!this.districtSearchQuery.provinceCode) return;
 
       this.districtService.getList(this.districtSearchQuery).subscribe((response) => {
         this.districts = response;
-        console.log('District results for search:', this.districts);
-
-        // Reset dependent query
-        this.query.communeCode = null;
-
-        this.communes.totalCount = 0;
-        this.communes.items = [];
       });
     }
 
+    this.resetCommuneDependentsAfterSelectingDistrict(isInModal);
   }
 
+  /**
+   * Reset dependents after selecting district
+   * @param isInModal True if is in modal
+   */
+  resetCommuneDependentsAfterSelectingDistrict(isInModal: boolean) {
+    this.resetCommuneQuery(isInModal);
+    this.resetCommuneResults(isInModal);
+  }
+
+  /**
+   * Handle on district search change
+   * @param search Search term
+   */
   onDistrictSearch(search: string) {
     this.districtSearchQuery.search = search;
     this.loadDistricts();
   }
 
-  onDistrictChange(districtCode: string) {
-    if (districtCode) {
-      // Select district will need to update the queries
+  /**
+   * Handler on district change
+   * @param districtCode Code of changed district
+   * @param isInModal True if is in modal
+   */
+  onDistrictChange(districtCode: string, isInModal?: boolean) {
+    if (!districtCode) return;
+
+    if (isInModal) {
+      this.communeUCQuery.districtCode = districtCode;
+    } else {
       this.query.districtCode = districtCode;
       this.communeSearchQuery.districtCode = districtCode;
-
-      this.loadCommunes();
     }
-  }
 
-  onDistrictUCFormChange(districtCode: string) {
-    if (districtCode) {
-      this.communeUCQuery.districtCode = districtCode;
-      this.loadCommunes();
-    }
+    this.loadCommunes();
   }
 
   // Commune-related methods

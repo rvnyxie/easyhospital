@@ -188,7 +188,7 @@
               formControlName='districtCode'
               [nzDisabled]='!districtUCQuery.provinceCode'
               (nzOnSearch)='onDistrictSearch($event)'
-              (ngModelChange)='onDistrictUCFormChange($event)'
+              (ngModelChange)='onDistrictChange($event, true)'
             >
               <nz-option
                 *ngFor='let district of districtResultsInModal.items'
