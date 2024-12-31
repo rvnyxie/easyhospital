@@ -4,8 +4,11 @@ using Refined.EasyHospital.Provinces;
 using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Validation;
 using Xunit;
 
 namespace Refined.EasyHospital.Samples
@@ -224,6 +227,59 @@ namespace Refined.EasyHospital.Samples
             );
         }
 
+        /// <summary>
+        /// Test for Create async method with invalid create input
+        /// </summary>
+        [Fact]
+        public async void CreateAsync_InvalidInput_ThrowException()
+        {
+            // Arrange
+            var mockProvinceCreateDto = new ProvinceCreateDto
+            {
+                Name = "Province 1",
+            };
+
+            var mockProvince = new Province
+            {
+                Name = mockProvinceCreateDto.Name
+            };
+
+            var mockProvinceDto = new ProvinceDto
+            {
+                Id = Guid.NewGuid(),
+                Name = mockProvinceCreateDto.Name,
+            };
+
+            _objectMapperMock
+                .Setup(mapper => mapper.Map<ProvinceCreateDto, Province>(mockProvinceCreateDto))
+                .Returns(mockProvince);
+
+            _provinceRepositoryMock
+                .Setup(repo => repo.InsertAsync(mockProvince, true, default))
+                .ThrowsAsync(new AbpValidationException());
+
+            // Act & Assert
+            var actualException = await Should.ThrowAsync<AbpValidationException>(() => _provinceAppService.CreateAsync(mockProvinceCreateDto));
+
+            _provinceRepositoryMock.Verify(
+                repo => repo.InsertAsync(mockProvince, true, default),
+                Times.Once()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<ProvinceCreateDto, Province>(mockProvinceCreateDto),
+                Times.Once()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<Province, ProvinceDto>(mockProvince),
+                Times.Never()
+            );
+        }
+
+        /// <summary>
+        /// Test for Update async method with valid input
+        /// </summary>
         [Fact]
         public async void UpdateAsync_ValidInput_Success()
         {
@@ -281,6 +337,136 @@ namespace Refined.EasyHospital.Samples
 
             _objectMapperMock.Verify(
                 mapper => mapper.Map<Province, ProvinceDto>(mockProvince),
+                Times.Once()
+            );
+        }
+
+        /// <summary>
+        /// Test for Update async method with invalid ID
+        /// </summary>
+        [Fact]
+        public async void UpdateAsync_InvalidId_ThrowException()
+        {
+            // Arrange
+            var mockProvinceUpdateDto = new ProvinceUpdateDto
+            {
+                Id = Guid.NewGuid(),
+                Name = "Updated province name"
+            };
+
+            var mockProvince = new Province
+            {
+                Name = mockProvinceUpdateDto.Name
+            };
+
+            var mockProvinceDto = new ProvinceDto
+            {
+                Id = mockProvinceUpdateDto.Id,
+                Name = mockProvinceUpdateDto.Name
+            };
+
+            _provinceRepositoryMock
+                .Setup(repo => repo.GetAsync(mockProvinceUpdateDto.Id, true, default))
+                .ThrowsAsync(new EntityNotFoundException());
+
+            // Act & Assert
+            var actualException = await Should.ThrowAsync<EntityNotFoundException>(() => _provinceAppService.UpdateAsync(mockProvinceUpdateDto.Id, mockProvinceUpdateDto));
+
+            _provinceRepositoryMock.Verify(
+                repo => repo.UpdateAsync(It.IsAny<Province>(), true, default),
+                Times.Never()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<ProvinceUpdateDto, Province>(mockProvinceUpdateDto, mockProvince),
+                Times.Never()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<Province, ProvinceDto>(mockProvince),
+                Times.Never()
+            );
+        }
+
+        /// <summary>
+        /// Test for Update async with invalid body properties
+        /// </summary>
+        [Fact]
+        public async void UpdateAsync_InvalidBodyProperties_ThrowException()
+        {
+            // Arrange
+            var mockProvinceUpdateDto = new ProvinceUpdateDto
+            {
+                Id = Guid.NewGuid(),
+                Code = "Invalid code",
+                Name = "Updated province name"
+            };
+
+            var mockProvince = new Province
+            {
+                Name = mockProvinceUpdateDto.Name
+            };
+
+            var mockProvinceDto = new ProvinceDto
+            {
+                Id = mockProvinceUpdateDto.Id,
+                Name = mockProvinceUpdateDto.Name
+            };
+
+            _objectMapperMock
+                .Setup(mapper => mapper.Map<ProvinceUpdateDto, Province>(mockProvinceUpdateDto))
+                .Returns(mockProvince);
+
+            _provinceRepositoryMock
+                .Setup(repo => repo.GetAsync(mockProvinceUpdateDto.Id, true, default))
+                .ReturnsAsync(mockProvince);
+
+            _provinceRepositoryMock
+                .Setup(repo => repo.UpdateAsync(mockProvince, It.IsAny<bool>(), default))
+                .ThrowsAsync(new AbpValidationException());
+
+            // Act & Assert
+            var actualException = await Should.ThrowAsync<AbpValidationException>(() => _provinceAppService.UpdateAsync(mockProvinceUpdateDto.Id, mockProvinceUpdateDto));
+
+            _provinceRepositoryMock.Verify(
+                repo => repo.UpdateAsync(It.IsAny<Province>(), true, default),
+                Times.Once()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<ProvinceUpdateDto, Province>(mockProvinceUpdateDto, mockProvince),
+                Times.Once()
+            );
+
+            _objectMapperMock.Verify(
+                mapper => mapper.Map<Province, ProvinceDto>(mockProvince),
+                Times.Never()
+            );
+        }
+
+        /// <summary>
+        /// Test for Delete async method with valid ID
+        /// </summary>
+        [Fact]
+        public async void DeleteAsync_ValidId_Success()
+        {
+            // Arrange
+            var mockProvinceId = Guid.NewGuid();
+
+            var mockProvince = new Province()
+            {
+                Name = "Province 1"
+            };
+
+            _provinceRepositoryMock
+                .Setup(repo => repo.DeleteAsync(mockProvinceId, false, default))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            await _provinceAppService.DeleteAsync(mockProvinceId);
+
+            _provinceRepositoryMock.Verify(
+                repo => repo.DeleteAsync(mockProvinceId, false, default),
                 Times.Once()
             );
         }
